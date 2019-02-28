@@ -60,7 +60,7 @@ endif(OpenCV_LIBS)
 add_library(CxxTool ${HEADERS} ${SOURCES})
 
 set_target_properties(CxxTool PROPERTIES LINKER_LANGUAGE CXX)
-
+set_target_properties(CxxTool PROPERTIES CXX_STANDARD 11)
 
 #####
 # Install parameters
