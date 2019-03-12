@@ -65,9 +65,10 @@ set_target_properties(CxxTool PROPERTIES LINKER_LANGUAGE CXX)
 #####
 # Install parameters
 #####
-SET(INSTALL_CMAKE_PATH ${PROJECT_SOURCE_DIR}/cmake)
-SET(INSTALL_HEADER_PATH ${PROJECT_SOURCE_DIR}/include/cpptool)
-SET(INSTALL_LIB_PATH ${PROJECT_SOURCE_DIR}/lib)
+SET(OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
+SET(INSTALL_CMAKE_PATH ${OUTPUT_PATH}/cmake)
+SET(INSTALL_HEADER_PATH ${OUTPUT_PATH}/include/cpptool)
+SET(INSTALL_LIB_PATH ${OUTPUT_PATH}/lib)
 
 #####
 # INSTALL 
@@ -83,7 +84,7 @@ INSTALL(FILES ${HEADERS}
 )
 
 configure_file(	${CMAKE_CURRENT_SOURCE_DIR}/FindCxxTool.cmake.in
-		${PROJECT_SOURCE_DIR}/cmake/FindCxxTool.cmake
+		${INSTALL_CMAKE_PATH}/FindCxxTool.cmake
 		IMMEDIATE @ONLY)
 
 #######################
