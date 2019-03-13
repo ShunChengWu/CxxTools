@@ -32,6 +32,8 @@
 #include <mach-o/dyld.h>
 #endif
 
+#include <sstream>
+
 namespace tools {
     class PathTool{
     public:
@@ -80,6 +82,8 @@ namespace tools {
         std::string getFileName(std::string pthIn);
         
         std::string CheckEnd(std::string path);
+        /// Break input string into tokens using the given delimiter
+        std::vector<std::string> splitLine(std::string s, char delimiter);
     };
     
 } //End of namespace Tools
