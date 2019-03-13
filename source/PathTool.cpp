@@ -360,7 +360,8 @@ namespace tools{
         std::istringstream tokenStream(s);
         while (std::getline(tokenStream, token, delimiter))
         {
-            tokens.push_back(token);
+            if(token != "")
+                tokens.push_back(token);
         }
         return tokens;
     }
