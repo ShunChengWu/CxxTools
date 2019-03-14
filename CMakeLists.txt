@@ -72,6 +72,13 @@ SET(INSTALL_BIN_DIR ${OUTPUT_PATH} CACHE PATH "Installation directory for execut
 SET(INSTALL_INCLUDE_DIR ${OUTPUT_PATH}/include/Cxxtools CACHE PATH "Installation directory for header files")
 SET(INSTALL_CMAKE_DIR ${OUTPUT_PATH}/cmake)
 
+#####
+# INSTALL 
+#####
+if(NOT(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT EQUAL FALSE))
+    set (CMAKE_INSTALL_PREFIX ${OUTPUT_PATH} CACHE PATH "default install path" FORCE )
+endif()
+
 # Make relative paths absolute (needed later on)
 foreach(p LIB BIN INCLUDE CMAKE)
   set(var INSTALL_${p}_DIR)
@@ -80,14 +87,6 @@ foreach(p LIB BIN INCLUDE CMAKE)
     message("var: " ${var})
   endif()
 endforeach()
-
-
-#####
-# INSTALL 
-#####
-if(NOT(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT EQUAL FALSE))
-    set (CMAKE_INSTALL_PREFIX ${OUTPUT_PATH} CACHE PATH "default install path" FORCE )
-endif()
 
 SET(PUBLIC_HEADERS)
 FOREACH(var ${HEADERS})
