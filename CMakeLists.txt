@@ -69,7 +69,7 @@ set_target_properties(CxxTools PROPERTIES CXX_STANDARD 11)
 SET(OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 SET(INSTALL_LIB_DIR ${OUTPUT_PATH}/lib CACHE PATH "Installation directory for libraries")
 SET(INSTALL_BIN_DIR ${OUTPUT_PATH} CACHE PATH "Installation directory for executables")
-SET(INSTALL_INCLUDE_DIR ${OUTPUT_PATH}/include/cxxtools CACHE PATH "Installation directory for header files")
+SET(INSTALL_INCLUDE_DIR ${OUTPUT_PATH}/include/Cxxtools CACHE PATH "Installation directory for header files")
 SET(INSTALL_CMAKE_DIR ${OUTPUT_PATH}/cmake)
 
 # Make relative paths absolute (needed later on)
