@@ -67,35 +67,32 @@ set_target_properties(CxxTools PROPERTIES CXX_STANDARD 11)
 # Install parameters
 #####
 SET(OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    message("Change CMAKE_INSTALL_PREFIX to " ${OUTPUT_PATH})
+    set (CMAKE_INSTALL_PREFIX ${OUTPUT_PATH} CACHE PATH "default install path" FORCE )
+endif()
+
 SET(INSTALL_LIB_DIR ${OUTPUT_PATH}/lib CACHE PATH "Installation directory for libraries")
 SET(INSTALL_BIN_DIR ${OUTPUT_PATH} CACHE PATH "Installation directory for executables")
 SET(INSTALL_INCLUDE_DIR ${OUTPUT_PATH}/include/Cxxtools CACHE PATH "Installation directory for header files")
-SET(INSTALL_CMAKE_DIR ${OUTPUT_PATH}/cmake)
-
-#####
-# INSTALL 
-#####
-#message("CMAKE_INSTALL_PREFIX: " ${CMAKE_INSTALL_PREFIX})
-#if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-#    message("Change CMAKE_INSTALL_PREFIX to " ${OUTPUT_PATH})
-#    set (CMAKE_INSTALL_PREFIX ${OUTPUT_PATH} CACHE PATH "default install path" FORCE )
-#endif()
+SET(INSTALL_CMAKE_DIR ${OUTPUT_PATH}/cmake CACHE PATH "Installation directory for cmake files")
 
 # Make relative paths absolute (needed later on)
 foreach(p LIB BIN INCLUDE CMAKE)
   set(var INSTALL_${p}_DIR)
   if(NOT IS_ABSOLUTE "${${var}}")
     set(${var} "${CMAKE_INSTALL_PREFIX}/${${var}}")
-    #message("var: " ${var})
   endif()
 endforeach()
 
+#####
+# INSTALL 
+#####
+## set PUBLIC_HEADERS ##
 SET(PUBLIC_HEADERS)
 FOREACH(var ${HEADERS})
   SET(PUBLIC_HEADERS "${PUBLIC_HEADERS}" "${var}")
-
 ENDFOREACH(var ${HEADERS})
-#message("PUBLIC_HEADERS: " ${PUBLIC_HEADERS})
 SET_TARGET_PROPERTIES(CxxTools PROPERTIES PUBLIC_HEADER "${PUBLIC_HEADERS}")
 UNSET(PUBLIC_HEADERS)
 
