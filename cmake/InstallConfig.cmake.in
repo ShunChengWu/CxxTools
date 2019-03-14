@@ -1,0 +1,18 @@
+# - Config file for the @INSTALL_TARGET_NAME@ package
+# It defines the following variables
+#  @INSTALL_TARGET_NAME@_INCLUDE_DIRS - include directories for CXXTOOLS
+#  @INSTALL_TARGET_NAME@_LIBRARIES    - libraries to link against
+#  @INSTALL_TARGET_NAME@_EXECUTABLE   - the bar executable
+
+# Compute paths
+get_filename_component(@INSTALL_TARGET_NAME@_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+set(@INSTALL_TARGET_NAME@_INCLUDE_DIRS "@CONF_INCLUDE_DIRS@")
+
+# Our library dependencies (contains definitions for IMPORTED targets)
+if(NOT TARGET @INSTALL_TARGET_NAME@ AND NOT @INSTALL_TARGET_NAME@_BINARY_DIR)
+  include("${@INSTALL_TARGET_NAME@_CMAKE_DIR}/@INSTALL_TARGETFILE_NAME@.cmake")
+endif()
+
+# These are IMPORTED targets created by @INSTALL_TARGETFILE_NAME@.cmake
+set(@INSTALL_TARGET_NAME@_LIBRARIES @INSTALL_TARGET_NAME@)
+#set(@INSTALL_TARGET_NAME@_EXECUTABLE bar)
