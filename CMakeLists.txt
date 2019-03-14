@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.3 FATAL_ERROR)
 
-project(cxxTool CXX)
+project(cxxTools CXX)
 
 # If on Mac OS X:
 IF(${CMAKE_SYSTEM} MATCHES "Darwin")
@@ -57,34 +57,38 @@ if(OpenCV_LIBS)
 	list(APPEND SOURCES ${SOURCES_CV})
 endif(OpenCV_LIBS)
 
-add_library(CxxTool ${HEADERS} ${SOURCES})
+add_library(CxxTools ${HEADERS} ${SOURCES})
 
-set_target_properties(CxxTool PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(CxxTool PROPERTIES CXX_STANDARD 11)
+set_target_properties(CxxTools PROPERTIES LINKER_LANGUAGE CXX)
+set_target_properties(CxxTools PROPERTIES CXX_STANDARD 11)
 
 #####
 # Install parameters
 #####
 SET(OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 SET(INSTALL_CMAKE_PATH ${OUTPUT_PATH}/cmake)
-SET(INSTALL_HEADER_PATH ${OUTPUT_PATH}/include/cxxtool)
+SET(INSTALL_HEADER_PATH ${OUTPUT_PATH}/include/cxxtools)
 SET(INSTALL_LIB_PATH ${OUTPUT_PATH}/lib)
 
 #####
 # INSTALL 
 #####
-INSTALL(TARGETS  CxxTool
+INSTALL(TARGETS  CxxTools EXPORT CxxTools-targets DESTINATION ${OUTPUT_PATH}
 	ARCHIVE DESTINATION ${INSTALL_LIB_PATH} 
 	LIBRARY DESTINATION  ${INSTALL_LIB_PATH} 
-	INCLUDES DESTINATION "include/"
+	INCLUDES DESTINATION ${EIGEN3_INCLUDE_DIR}
 )
-
 INSTALL(FILES ${HEADERS}
 	DESTINATION ${INSTALL_HEADER_PATH} COMPONENT runtime
 )
+INSTALL(FILES CxxTools-config.cmake DESTINATION ${OUTPUT_PATH})
+INSTALL(EXPORT CxxTools-targets DESTINATION ${OUTPUT_PATH})
 
-configure_file(	${CMAKE_CURRENT_SOURCE_DIR}/FindCxxTool.cmake.in
-		${INSTALL_CMAKE_PATH}/FindCxxTool.cmake
+
+
+
+configure_file(	${CMAKE_CURRENT_SOURCE_DIR}/FindCxxTools.cmake.in
+		${INSTALL_CMAKE_PATH}/FindCxxTools.cmake
 		IMMEDIATE @ONLY)
 
 #######################
