@@ -71,6 +71,7 @@ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     message("Change CMAKE_INSTALL_PREFIX to " ${OUTPUT_PATH})
     set (CMAKE_INSTALL_PREFIX ${OUTPUT_PATH} CACHE PATH "default install path" FORCE )
 endif()
+message("CMAKE_INSTALL_PREFIX to " ${CMAKE_INSTALL_PREFIX})
 
 SET(INSTALL_LIB_DIR ${OUTPUT_PATH}/lib CACHE PATH "Installation directory for libraries")
 SET(INSTALL_BIN_DIR ${OUTPUT_PATH} CACHE PATH "Installation directory for executables")
