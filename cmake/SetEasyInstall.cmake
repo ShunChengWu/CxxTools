@@ -62,7 +62,7 @@ ENDFOREACH(var ${headers})
 SET_TARGET_PROPERTIES(${targetname} PROPERTIES PUBLIC_HEADER "${PUBLIC_HEADERS}")
 UNSET(PUBLIC_HEADERS)
 
-get_target_property(${targetname}_INCLUDE_DIRS ${targetname} INCLUDE_DIRECTORIES)
+get_target_property(${targetname}_INCLUDE_DIRS ${targetname} INTERFACE_INCLUDE_DIRECTORIES)
 
 INSTALL(TARGETS  ${targetname} 
 	EXPORT ${targetname}Targets
