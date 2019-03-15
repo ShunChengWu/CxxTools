@@ -35,7 +35,7 @@ foreach(p LIB BIN INCLUDE CMAKE)
   endif()
 endforeach()
 
-# Create the CxxToolsConfig.cmake and CxxToolsConfigVersion files
+# Create the ${NAME}Config.cmake and ${NAME}ConfigVersion files
 file(RELATIVE_PATH REL_INCLUDE_DIR "${INSTALL_CMAKE_DIR}" "${INSTALL_INCLUDE_DIR}")
 
 set(INSTALL_TARGET_NAME ${NAME})
@@ -56,7 +56,7 @@ configure_file(${PROJECT_SOURCE_DIR}/cmake/cmake_macro_install_uninstall/Install
 configure_file(${PROJECT_SOURCE_DIR}/cmake/cmake_macro_install_uninstall/InstallConfigVersion.cmake.in
   "${PROJECT_BINARY_DIR}/${NAME}ConfigVersion.cmake" @ONLY)
 
-# Install the CxxToolsConfig.cmake and CxxToolsConfigVersion.cmake
+# Install the ${NAME}Config.cmake and ${NAME}ConfigVersion.cmake
 install(FILES
   "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${NAME}Config.cmake"
   "${PROJECT_BINARY_DIR}/${NAME}ConfigVersion.cmake"
