@@ -1,6 +1,6 @@
 # - Config file for the @INSTALL_TARGET_NAME@ package
 # It defines the following variables
-#  @INSTALL_TARGET_NAME@_INCLUDE_DIRS - include directories for CXXTOOLS
+#  @INSTALL_TARGET_NAME@_INCLUDE_DIRS - include directories for @INSTALL_TARGET_NAME@
 #  @INSTALL_TARGET_NAME@_LIBRARIES    - libraries to link against
 #  @INSTALL_TARGET_NAME@_EXECUTABLE   - the bar executable
 

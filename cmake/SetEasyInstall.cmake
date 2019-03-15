@@ -68,10 +68,6 @@ IF(NOT ${targetname}_INCLUDE_DIRS)
 	set(${targetname}_INCLUDE_DIRS "")
 ENDIF(NOT ${targetname}_INCLUDE_DIRS)
 
-#INCLUDE(${CMAKE_CURRENT_LIST_DIR}/macro_get_target_properties.cmake)
-#print_target_properties(${targetname})
-#message("${targetname}_INCLUDE_DIRS: " ${${targetname}_INCLUDE_DIRS})
-
 INSTALL(TARGETS  ${targetname} 
 	EXPORT ${targetname}Targets
 	RUNTIME DESTINATION ${INSTALL_BIN_DIR} COMPONENT bin
