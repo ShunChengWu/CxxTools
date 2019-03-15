@@ -2,14 +2,7 @@ cmake_minimum_required(VERSION 3.3 FATAL_ERROR)
 
 project(cxxTools CXX)
 
-set(CXXTOOLS_MAJOR_VERSION 0)
-set(CXXTOOLS_MINOR_VERSION 0)
-set(CXXTOOLS_PATCH_VERSION 1)
-set(CXXTOOLS_VERSION 
-	${CXXTOOLS_MAJOR_VERSION}.${CXXTOOLS_MINOR_VERSION}.${CXXTOOLS_PATCH_VERSION})
-
-INCLUDE(${PROJECT_SOURCE_DIR}/cmake/macros.cmake)
-#SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+INCLUDE(${PROJECT_SOURCE_DIR}/cmake/cmake_macro_install_uninstall/macro.cmake)
 
 # If on Mac OS X:
 IF(${CMAKE_SYSTEM} MATCHES "Darwin")
@@ -33,12 +26,12 @@ ENDIF()
 
 find_package(Eigen3 REQUIRED)
 
-file(GLOB HEADERS
+file(GLOB headers
 	"include/*.h"
 	"include/*.hpp"
 )
 
-file(GLOB SOURCES
+file(GLOB sources
 	"source/*.cc"
 	"source/*.cpp"
 )
@@ -54,57 +47,16 @@ if(OpenCV_LIBS)
 	    "source/opencv/*.cpp"
 	)
 
-	list(APPEND HEADERS ${HEADERS_CV})
-	list(APPEND SOURCES ${SOURCES_CV})
+	list(APPEND headers ${HEADERS_CV})
+	list(APPEND sources ${SOURCES_CV})
 endif(OpenCV_LIBS)
 
-add_library(CxxTools ${HEADERS} ${SOURCES})
-target_include_directories(CxxTools PRIVATE include ${EIGEN3_INCLUDE_DIR})
-set_target_properties(CxxTools PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(CxxTools PROPERTIES CXX_STANDARD 11)
+SET(targetname CxxTools)
+setVersion(${targetname}_VERSION 0 0 1)
 
-#####
-# Install parameters
-#####
-SET(OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    message("Change CMAKE_INSTALL_PREFIX to " ${OUTPUT_PATH})
-    set (CMAKE_INSTALL_PREFIX ${OUTPUT_PATH} CACHE PATH "default install path" FORCE )
-endif()
-#message("CMAKE_INSTALL_PREFIX to " ${CMAKE_INSTALL_PREFIX})
+add_library(${targetname} ${headers} ${sources})
+target_include_directories(${targetname} PRIVATE include ${EIGEN3_INCLUDE_DIR})
+set_target_properties(${targetname} PROPERTIES LINKER_LANGUAGE CXX)
+set_target_properties(${targetname} PROPERTIES CXX_STANDARD 11)
 
-SET(INSTALL_LIB_DIR lib CACHE PATH "Installation directory for libraries")
-SET(INSTALL_BIN_DIR bin CACHE PATH "Installation directory for executables")
-SET(INSTALL_INCLUDE_DIR include/Cxxtools CACHE PATH "Installation directory for header files")
-SET(INSTALL_CMAKE_DIR cmake CACHE PATH "Installation directory for cmake files")
-
-# Make relative paths absolute (needed later on)
-foreach(p LIB BIN INCLUDE CMAKE)
-  set(var INSTALL_${p}_DIR)
-  if(NOT IS_ABSOLUTE "${${var}}")
-    set(${var} "${CMAKE_INSTALL_PREFIX}/${${var}}")
-  endif()
-endforeach()
-
-#####
-# INSTALL 
-#####
-## set PUBLIC_HEADERS ##
-SET(PUBLIC_HEADERS)
-FOREACH(var ${HEADERS})
-  SET(PUBLIC_HEADERS "${PUBLIC_HEADERS}" "${var}")
-ENDFOREACH(var ${HEADERS})
-SET_TARGET_PROPERTIES(CxxTools PROPERTIES PUBLIC_HEADER "${PUBLIC_HEADERS}")
-UNSET(PUBLIC_HEADERS)
-
-INSTALL(TARGETS  CxxTools 
-	EXPORT CxxToolsTargets
-	RUNTIME DESTINATION ${INSTALL_BIN_DIR} COMPONENT bin
-	ARCHIVE DESTINATION ${INSTALL_LIB_DIR} COMPONENT lib
-	LIBRARY DESTINATION  ${INSTALL_LIB_DIR} COMPONENT lib
-	INCLUDES DESTINATION ${EIGEN3_INCLUDE_DIR} include #${OUTPUT_PATH}/include
-	PUBLIC_HEADER DESTINATION ${INSTALL_INCLUDE_DIR} COMPONENT include# ${OUTPUT_PATH} include
-)
-
-setInstall(CxxTools CxxToolsTargets ${CXXTOOLS_VERSION} ${INSTALL_LIB_DIR} ${INSTALL_BIN_DIR} ${INSTALL_INCLUDE_DIR} ${INSTALL_CMAKE_DIR})
-
+INCLUDE(${PROJECT_SOURCE_DIR}/cmake/SetEasyInstall.cmake)

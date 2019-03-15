@@ -44,15 +44,16 @@ set(INSTALL_TARGETFILE_NAME ${TARGETNAME})
 
 # ... for the build tree
 set(CONF_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}" "${PROJECT_BINARY_DIR}")
-configure_file(${PROJECT_SOURCE_DIR}/cmake/InstallConfig.cmake.in "${PROJECT_BINARY_DIR}/${NAME}Config.cmake" @ONLY)
+configure_file(${PROJECT_SOURCE_DIR}/cmake/cmake_macro_install_uninstall/InstallConfig.cmake.in 
+	"${PROJECT_BINARY_DIR}/${NAME}Config.cmake" @ONLY)
 
 # ... for the install tree
 set(CONF_INCLUDE_DIRS "\${INSTALL_CMAKE_DIR}/${REL_INCLUDE_DIR}")
-configure_file(${PROJECT_SOURCE_DIR}/cmake/InstallConfig.cmake.in
+configure_file(${PROJECT_SOURCE_DIR}/cmake/cmake_macro_install_uninstall/InstallConfig.cmake.in
   "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${NAME}Config.cmake" @ONLY)
 
 # ... for both
-configure_file(${PROJECT_SOURCE_DIR}/cmake/InstallConfigVersion.cmake.in
+configure_file(${PROJECT_SOURCE_DIR}/cmake/cmake_macro_install_uninstall/InstallConfigVersion.cmake.in
   "${PROJECT_BINARY_DIR}/${NAME}ConfigVersion.cmake" @ONLY)
 
 # Install the CxxToolsConfig.cmake and CxxToolsConfigVersion.cmake
@@ -70,7 +71,7 @@ install(EXPORT ${INSTALL_TARGETFILE_NAME} DESTINATION
 # Uninstall target, for "make uninstall"
 #######################
 CONFIGURE_FILE(
-  "${PROJECT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
+  "${PROJECT_SOURCE_DIR}/cmake/cmake_macro_install_uninstall/cmake_uninstall.cmake.in"
   "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
   IMMEDIATE @ONLY)
 
@@ -79,3 +80,12 @@ ADD_CUSTOM_TARGET(uninstall
 
 
 endmacro(setInstall)
+
+
+
+macro(setVersion VERSION major minor patch)
+set(MAJOR_VERSION 0)
+set(MINOR_VERSION 0)
+set(PATCH_VERSION 1)
+set(${VERSION} ${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION})
+endmacro(setVersion)
