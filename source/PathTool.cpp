@@ -225,11 +225,37 @@ namespace tools{
     }
     
     void PathTool::create_folder(std::string name){
-#ifdef WIN32
-        _mkdir(name.c_str());
+//#ifdef WIN32
+//        _mkdir(name.c_str());
+//#else
+//        mkdir(name.c_str(), 0755);
+//#endif
+        auto first = name.find_first_of('/');
+        auto second = name.find_last_of('/');
+        if(first != second) {
+            std::vector<std::string> folders;
+            std::string motherFolder = name.substr(0, first+1);
+            std::string rest = name.substr(first+1, name.length());
+            while(true){
+                auto f = rest.find_first_of('/');
+                std::string folder;
+                if(f == std::string::npos){
+                    folder = motherFolder + rest;
+                } else {
+                    folder = motherFolder + rest.substr(0, f+1);
+                }
+                rest = rest.substr(f+1, rest.length());
+#if defined _MSC_VER
+                _mkdir(folder.c_str());
 #else
-        mkdir(name.c_str(), 0755);
+                mkdir(folder.c_str(), 0777);
 #endif
+                motherFolder = folder;
+                if(f == std::string::npos){
+                    break;
+                }
+            }
+        }
     }
     
     char* PathTool::string2char (std::string string){
