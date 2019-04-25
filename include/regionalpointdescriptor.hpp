@@ -215,11 +215,6 @@ namespace RPD{
             size_t position = std::distance(weights.begin(), prob);
             float max = weights[position];
             if(max == 0){
-//                printf("Weights: ");
-//                for(auto w : weights){
-//                    printf("%f ", w);
-//                }
-//                printf("\n");
                 printf("Input vector are all zero.\n");
                 return 0;
             }
