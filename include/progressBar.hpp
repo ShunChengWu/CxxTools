@@ -16,7 +16,7 @@ namespace tools{
                 int val = (int) (percentage * 100);
                 int lpad = (int) (percentage * pbwidh);
                 int rpad = pbwidh - lpad;
-                printf ("\r[%.*s%*s] %3d%% ", lpad, pbstr.c_str(), rpad, val, "");
+                printf ("\r[%.*s%*s] %3d%% ", lpad, pbstr.c_str(), rpad, "", val);
                 if(flush) fflush (stdout);
             }
                 break;
