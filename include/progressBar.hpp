@@ -1,12 +1,5 @@
-//
-//  Tools.cpp
-//  pointnet_cpp
-//
-//  Created by Shun-Cheng Wu on 18/10/2017.
-//
-//
+#pragma once
 
-#include <Tools.hpp>
 
 namespace tools{
     void ProgessBar (const int& current, const int& total, int type, bool flush=true){

@@ -48,8 +48,6 @@
 namespace tools {
     std::vector<std::string> ReadDatainLine(std::string line, char* symbol);
     
-    void ProgessBar (const int& current, const int& total, int type =0);
-    
     template <typename T>
     T Getrandom(int min, int max){
         std::random_device rd;     // only used once to initialise (seed) engine
@@ -86,107 +84,6 @@ namespace tools {
         for (int i=0; i< num;++i) vec.emplace_back(new t());
         return vec;
     }
-    
-    class parser{
-        std::map<std::string, std::vector<std::string>> argvs;
-        std::pair<std::string, std::vector<std::string>> pair;
-    public:
-        parser(int argc, char** argv){
-            std::string current_parse = "";
-            for (int i=0; i< argc; ++i) {
-                std::string str = argv[i];
-                if (str.find("--") != std::string::npos){
-                    current_parse = str.substr(2, str.size());
-                } else {
-                    if (current_parse != "")
-                        argvs[current_parse].push_back(argv[i]);
-                }
-            }
-        };
-        
-        template <typename T, typename ... Types>
-        void process (std::string name, T& var, Types&& ... Args){
-            static const std::size_t Tsize = sizeof...(Types);
-    //            std::cout<< "Argsize: "<<Tsize << std::endl;
-            
-            process(name, var);
-            for (int i=1; i<Tsize; ++i) {
-                process(std::forward<Types>(Args)...);
-            }
-        };
-        
-        bool find_parse (int argc, char** argv, std::string target){
-            bool found = false;
-            ;
-            for (int i=0;i<argc;++i) {
-                std::string strtmp = argv[i];
-                if (!target.compare(strtmp) | found) found = true;
-            }
-            return found;
-        }
-
-    private:
-        template <typename T>
-        void process(std::string name, T& t){
-            bool found = false;
-            for (auto m: argvs) {
-                if (m.first == name) {
-                    found = true;
-                    t.resize(m.second.size());
-                    for (size_t i=0; i< m.second.size();++i) t.at(i) = m.second[i];
-                }
-            }
-            if (!found){
-                std::cout << "Cannot process command \"" << name << "\""  << std::endl;
-            }
-        }
-        void process(std::string name, std::vector<std::string>& t){
-            for (auto m: argvs) {
-                if (m.first == name) {
-                    t.resize(m.second.size());
-                    for (size_t i=0; i< m.second.size();++i) t.at(i) = m.second[i];
-                }
-            }
-        }
-        void process(std::string name, std::vector<int>& t){
-            for (auto m: argvs) {
-                if (m.first == name) {
-                    t.resize(m.second.size());
-                    for (size_t i=0; i< m.second.size();++i) t.at(i) = std::stoi(m.second[i]);
-                }
-            }
-        }
-        void process(std::string name, std::vector<float>& t){
-            for (auto m: argvs) {
-                if (m.first == name) {
-                    t.resize(m.second.size());
-                    for (size_t i=0; i< m.second.size();++i) t.at(i) = std::stof(m.second[i]);
-                }
-            }
-        }
-        
-        void process( std::string name, std::string& var) {
-            for (auto m: argvs) {
-                if (m.first == name) var = m.second[0];
-            }
-        }
-        void process( std::string name, int& var) {
-            for (auto m: argvs) {
-                if (m.first == name) var = std::stoi(m.second[0]);
-            }
-        }
-        void process( std::string name, float& var) {
-            for (auto m: argvs) {
-                if (m.first == name) var = std::stof(m.second[0]);
-            }
-        }
-        void process( std::string name, bool& var) {
-            for (auto m: argvs) {
-                if (m.first == name) var = std::stoi(m.second[0]);
-            }
-        }
-    };
-    
     
     template <typename T>
     class timer{
