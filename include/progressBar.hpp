@@ -9,14 +9,6 @@ namespace tools{
                 printf("%5.1f%%", percentage*100);
                 if(flush) fflush (stdout);
                 break;
-            case 2:// Number
-                printf("[%d/%d]", current, total);
-                if(flush) fflush (stdout);
-                break;
-            case 3:// Percent & Number
-                printf("%5.1f%%[%d/%d]", percentage*100, current, total);
-                if(flush) fflush (stdout);
-                break;
             default: // bar & percent
             {
                 static std::string pbstr = "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||";
