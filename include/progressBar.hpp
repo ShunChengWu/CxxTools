@@ -2,9 +2,8 @@
 
 
 namespace tools{
-    void ProgessBar (const int& current, const int& total, int type=0, bool flush=true){
+    void ProgessBar (double percentage, int type=0, bool flush=true){
         //Calculate percentage
-        float percentage = (float)(current)/float(total);
         switch (type) {
             case 1:// Percent
                 printf("%5.1f%%", percentage*100);
@@ -25,7 +24,7 @@ namespace tools{
                 int val = (int) (percentage * 100);
                 int lpad = (int) (percentage * pbwidh);
                 int rpad = pbwidh - lpad;
-                printf ("\r%3d%% [%.*s%*s]", val, lpad, pbstr.c_str(), rpad, "");
+                printf ("\r[%.*s%*s] %3d%% ", lpad, pbstr.c_str(), rpad, val, "");
                 if(flush) fflush (stdout);
             }
                 break;
