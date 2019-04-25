@@ -1,6 +1,5 @@
 //
 //  Tools.hpp
-//  pointnet_cpp
 //
 //  Created by Shun-Cheng Wu on 18/10/2017.
 //
