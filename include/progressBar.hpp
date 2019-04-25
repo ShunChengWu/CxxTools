@@ -2,7 +2,7 @@
 
 
 namespace tools{
-    void ProgessBar (const int& current, const int& total, int type, bool flush=true){
+    void ProgessBar (const int& current, const int& total, int type=0, bool flush=true){
         //Calculate percentage
         float percentage = (float)(current)/total*10;
         switch (type) {
