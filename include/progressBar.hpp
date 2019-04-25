@@ -4,10 +4,10 @@
 namespace tools{
     void ProgessBar (const int& current, const int& total, int type=0, bool flush=true){
         //Calculate percentage
-        float percentage = (float)(current)/total*10;
+        float percentage = (float)(current)/float(total);
         switch (type) {
             case 1:// Percent
-                printf("%5.1f%%", percentage*10);
+                printf("%5.1f%%", percentage*100);
                 if(flush) fflush (stdout);
                 break;
             case 2:// Number
@@ -15,7 +15,7 @@ namespace tools{
                 if(flush) fflush (stdout);
                 break;
             case 3:// Percent & Number
-                printf("%5.1f%%[%d/%d]", percentage*10, current, total);
+                printf("%5.1f%%[%d/%d]", percentage*100, current, total);
                 if(flush) fflush (stdout);
                 break;
             default: // bar & percent
