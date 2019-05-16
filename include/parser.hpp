@@ -87,7 +87,7 @@ namespace tools {
                 hasHelp_ = true;
             } else {
                 if(find_switch(name)) {
-                    *var = true;
+                    *var = !(*var);
                     command.handled = true;
                 }
             }

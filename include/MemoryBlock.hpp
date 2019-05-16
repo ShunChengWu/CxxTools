@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #ifdef COMPILE_WITH_CUDA
 #include <cuda_runtime.h>
 #endif
