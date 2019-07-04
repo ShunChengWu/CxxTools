@@ -115,13 +115,22 @@ namespace tools{
          */
         void waitWorkCompleteandShow(size_t total_num, long long display_time = 1){
             float time_past = display_time;
+            static std::string pbstr = "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||";
+            static int pbwidh = 60;
             while(checkTaskLeft()){
                 std::this_thread::sleep_for(std::chrono::seconds(display_time));
                 int current = checkTaskLeft();
                 int proceed = total_num-current;
                 float sec_left = time_past/proceed*current;
                 time_past += display_time;
-                printf("%5.2f%%[%d/%zu]ET: %4.0f(s) \n", float(proceed)/total_num*100, proceed, total_num, sec_left);
+                //                printf("%5.2f%%[%d/%zu]ET: %4.0f(s) \n", float(proceed)/total_num*100, proceed, total_num, sec_left);
+                
+                float percentage = float(proceed)/total_num;
+                int val = (int) (percentage * 100);
+                int lpad = (int) (percentage * pbwidh);
+                int rpad = pbwidh - lpad;
+                printf ("\r[%.*s%*s] %3d%% ET: %4.0f(s)", lpad, pbstr.c_str(), rpad, "", val, sec_left);
+                fflush (stdout);
             }
         }
         
