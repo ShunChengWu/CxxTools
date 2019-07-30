@@ -7,7 +7,7 @@
 #include <queue>
 #include <thread>
 #include <utility>
-
+#include <atomic>
 namespace tools{
     class TaskThreadPool{
     private:
@@ -27,7 +27,7 @@ namespace tools{
         std::condition_variable condition_;
         std::condition_variable completed_;
         bool running_;
-        bool complete_;
+        atomic_bool complete_;
         std::size_t available_;
         std::size_t total_;
         bool pause_;
@@ -58,7 +58,7 @@ namespace tools{
             }
         }
         const size_t getPoolSize(){return threads_.size();}
-        
+        bool finished(){return complete_;} 
         /// @brief Destructor.
         ~TaskThreadPool() {
             // Set running flag to false then notify all threads.
