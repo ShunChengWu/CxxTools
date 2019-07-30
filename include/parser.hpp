@@ -14,6 +14,7 @@
 #include <sstream>
 
 #define pkgname(var) pkgVar(#var, var)
+#define pkgcname(name,var) pkgVar(name,var)
 template <typename T>
 std::pair<std::string, T*> pkgVar(std::string name, T* var){
     if(name.find_first_of("&", 0, 1) != std::string::npos) {
