@@ -154,7 +154,7 @@ namespace tools {
             if(vNotHandled.size()){
                 printf("[Error] The following argument(s) should be given. Pass --h for help\n");
                 for(auto& noth : vNotHandled){
-                    printf("\t\t %s\n", noth.c_str());
+		    printf("\t\t %s \"%s\"\n", noth.c_str(), vRegisterd[noth].explination.c_str());
                 }
                 return true;
             }
