@@ -27,7 +27,7 @@ namespace tools{
         std::condition_variable condition_;
         std::condition_variable completed_;
         bool running_;
-        atomic_bool complete_;
+        std::atomic_bool complete_;
         std::size_t available_;
         std::size_t total_;
         bool pause_;
