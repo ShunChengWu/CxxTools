@@ -83,6 +83,8 @@ namespace tools {
         std::string CheckEnd(std::string path);
         /// Break input string into tokens using the given delimiter
         std::vector<std::string> splitLine(std::string s, char delimiter);
+
+        std::string addWaterSerialNumber(std::string path);
     };
     
 } //End of namespace Tools

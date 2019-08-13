@@ -393,4 +393,30 @@ namespace tools{
         }
         return tokens;
     }
+
+    std::string PathTool::addWaterSerialNumber(std::string path){
+        std::string path_new = path;
+        bool exist = false;
+        std::string type = getFileType(path);
+        bool isFolder = type == "";
+
+        size_t counter=0;
+        if(isFolder) {
+            exist = checkfolderexist(path_new);
+            while (exist) {
+                path_new = CheckEnd(path); // check and add "/"
+                path_new = path_new.substr(0, path_new.length() - 1); // remove "/"
+                path_new += std::to_string(counter++);
+                exist = checkfolderexist(path_new);
+            }
+        } else {
+            exist = checkfileexist(path);
+            while(exist) {
+                path_new = remove_file_type(path);
+                path_new += std::to_string(counter++) + type;
+                exist = checkfileexist(path_new);
+            }
+        }
+        return  path_new;
+    }
 }
