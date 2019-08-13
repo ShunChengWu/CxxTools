@@ -255,6 +255,8 @@ namespace tools{
                     break;
                 }
             }
+        } else {
+            mkdir(name.c_str(), 0777);
         }
     }
     
