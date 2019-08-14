@@ -231,6 +231,13 @@ namespace tools{
     }
     
     void PathTool::create_folder(std::string name){
+        bool isFolder = this->isFolder(name);
+        if(!isFolder) {
+            printf("[Warning][PathTool::create_folder] Input path has file type! Remove file type first! You can use remove_file_type() function.\n");
+            return;
+        }
+        name = this->CheckEnd(name);
+
 //#ifdef WIN32
 //        _mkdir(name.c_str());
 //#else
