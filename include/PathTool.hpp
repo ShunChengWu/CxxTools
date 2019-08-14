@@ -39,7 +39,7 @@ namespace tools {
         PathTool(){}
         //Folder related
         std::string get_executable_path ();
-        /// if times=0, return itself, 1 the first parent folder.
+        /// if times=0, return itself, 1 the first parent folder. In the case of given file path, 1 will return it's folder
         std::string find_parent_folder(std::string input, int times=1);
         /** if success? 0: -1 */
         int remove_directory(const char *path);
@@ -85,6 +85,8 @@ namespace tools {
         std::vector<std::string> splitLine(std::string s, char delimiter);
 
         std::string addWaterSerialNumber(std::string path);
+
+        bool isFolder(std::string path);
     };
     
 } //End of namespace Tools

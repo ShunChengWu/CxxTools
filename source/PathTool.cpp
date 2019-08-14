@@ -217,11 +217,17 @@ namespace tools{
     }
     
     void PathTool::check_and_delete_folder (const std::string& path){
-        if(checkfolderexist(path)) remove_directory(path.c_str());
+        std::string tmp = path;
+        bool isFolder = this->isFolder(tmp);
+        if(!isFolder) tmp = this->find_parent_folder(tmp);
+        if(checkfolderexist(tmp)) remove_directory(tmp.c_str());
     }
     
     void PathTool::check_and_create_folder (const std::string& path){
-        if(!checkfolderexist(path))create_folder(path);
+        std::string tmp = path;
+        bool isFolder = this->isFolder(tmp);
+        if(!isFolder) tmp = this->find_parent_folder(tmp);
+        if(!checkfolderexist(tmp))create_folder(tmp);
     }
     
     void PathTool::create_folder(std::string name){
@@ -418,5 +424,10 @@ namespace tools{
             }
         }
         return  path_new;
+    }
+
+    bool PathTool::isFolder(std::string path){
+        std::string type = getFileType(path);
+        return type == "";
     }
 }
