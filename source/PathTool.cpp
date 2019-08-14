@@ -246,7 +246,6 @@ namespace tools{
         auto first = name.find_first_of('/');
         auto second = name.find_last_of('/');
         if(first != second) {
-            std::vector<std::string> folders;
             std::string motherFolder = name.substr(0, first+1);
             std::string rest = name.substr(first+1, name.length());
             while(true){
@@ -261,7 +260,7 @@ namespace tools{
 #if defined _MSC_VER
                 _mkdir(folder.c_str());
 #else
-                mkdir(folder.c_str(), 0777);
+                mkdir(motherFolder.c_str(), 0777);
 #endif
                 motherFolder = folder;
                 if(f == std::string::npos){
