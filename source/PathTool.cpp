@@ -262,7 +262,7 @@ namespace tools{
                 }
             }
         } else {
-            mkdir(name.c_str(), 0777);
+            mkdir(name.substr(0, name.find_first_of('/')).c_str(), 0777);
         }
     }
     
