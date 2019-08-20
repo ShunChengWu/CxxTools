@@ -24,12 +24,37 @@ std::pair<std::string, T*> pkgVar(std::string name, T* var){
     return std::make_pair(name, var);
 }
 namespace tools {
+    class ParserException : public std::exception {
+    public:
+        ParserException(const std::string &exception):msg(exception){}
+        const char* what() const noexcept override {
+            return msg.c_str();
+        }
+    private:
+        std::string msg;
+    };
+    class LOG{
+    public:
+        LOG(){}
+        template <typename T>
+        LOG& operator << (T const &value) {
+            msg << value;
+        }
+        ~LOG(){
+            std::string value = msg.str();
+            throw ParserException(value);
+        }
+    private:
+        std::ostringstream msg;
+    };
+
     class Parser{
         std::map<std::string, std::vector<std::string>> argvs;
         bool hasHelp_;
         struct Command {
             std::string explination;
             std::string value;
+            size_t size;
             bool required;
             bool handled;
         };
@@ -47,11 +72,11 @@ namespace tools {
                 } else {
                     if (current_parse != "")
                         argvs[current_parse].push_back(argv[i]);
-                    
+
                 }
             }
         };
-        
+
         template <typename T>
         void addOption(std::pair<std::string, T*> pkg, std::string explaination = "", bool Required = false){
             const std::string& name = pkg.first;
@@ -60,12 +85,13 @@ namespace tools {
             command.explination = explaination;
             command.required = Required;
             command.handled = false;
-            
+            command.size = 1;
+
             if(hasHelp_ || find_switch("h") || find_switch("help")){
                 hasHelp_ = true;
             } else {
                 if(find_parse(name)){
-                    process(name, *var);
+                    process(name, var, command.size);
                     command.handled = true;
                 }
             }
@@ -75,7 +101,31 @@ namespace tools {
             vRegisterd[name] = command;
             vOrder.push_back(name);
         }
-        
+        template <typename T>
+        void addOption(std::pair<std::string, T*> pkg, size_t size, std::string explaination = "", bool Required = false){
+            const std::string& name = pkg.first;
+            T* var = pkg.second;
+            Command command;
+            command.explination = explaination;
+            command.required = Required;
+            command.handled = false;
+            command.size = size;
+
+            if(hasHelp_ || find_switch("h") || find_switch("help")){
+                hasHelp_ = true;
+            } else {
+                if(find_parse(name)){
+                    process(name, var, command.size);
+                    command.handled = true;
+                }
+            }
+            std::stringstream stn;
+            stn << *var;
+            command.value = stn.str();
+            vRegisterd[name] = command;
+            vOrder.push_back(name);
+        }
+
         void addSwitch(std::pair<std::string, bool*> pkg, std::string explaination = "", bool Requied = false){
             const std::string& name = pkg.first;
             bool* var = pkg.second;
@@ -83,7 +133,7 @@ namespace tools {
             command.explination = explaination;
             command.required = Requied;
             command.handled = false;
-            
+
             if(hasHelp_ || find_switch("h") || find_switch("help")){
                 hasHelp_ = true;
             } else {
@@ -98,7 +148,7 @@ namespace tools {
             vRegisterd[name] = command;
             vOrder.push_back(name);
         }
-        
+
         /// 1: good, 0: warning, -1: error
         int showMsg(){
             int maxLengh = 0;
@@ -125,8 +175,8 @@ namespace tools {
             }
             return 1;
         }
-        
-        
+
+
         template <typename T>
         int outputLog(T& log){
             size_t maxLengh = 0;
@@ -141,7 +191,7 @@ namespace tools {
             }
             return 1;
         }
-        
+
         bool hasHelp(){return hasHelp_;}
     private:
         bool hasNotHandled(){
@@ -154,7 +204,7 @@ namespace tools {
             if(vNotHandled.size()){
                 printf("[Error] The following argument(s) should be given. Pass --h for help\n");
                 for(auto& noth : vNotHandled){
-		    printf("\t\t %s \"%s\"\n", noth.c_str(), vRegisterd[noth].explination.c_str());
+                    printf("\t\t %s \"%s\"\n", noth.c_str(), vRegisterd[noth].explination.c_str());
                 }
                 return true;
             }
@@ -176,18 +226,16 @@ namespace tools {
             }
             return false;
         }
-        
-        template <typename T, typename ... Types>
-        void process (std::string name, T& var, Types&& ... Args){
-            static const std::size_t Tsize = sizeof...(Types);
-            //            std::cout<< "Argsize: "<<Tsize << std::endl;
-            
-            process(name, var);
-            for (int i=1; i<Tsize; ++i) {
-                process(std::forward<Types>(Args)...);
-            }
-        };
-        
+
+//        template <typename T, typename ... Types>
+//        void process (std::string name, T& var, Types&& ... Args){
+//            static const std::size_t Tsize = sizeof...(Types);
+//            process(name, var);
+//            for (int i=1; i<Tsize; ++i) {
+//                process(std::forward<Types>(Args)...);
+//            }
+//        };
+
         bool find_parse (std::string target){
             if(argvs.count(target)){
                 if(argvs[target].size() > 0)
@@ -195,7 +243,7 @@ namespace tools {
             }
             return false;
         }
-        
+
         bool find_switch(std::string target){
             if(argvs.count(target)){
                 if(argvs[target].size() == 0)
@@ -203,7 +251,7 @@ namespace tools {
             }
             return false;
         }
-        
+
         template <typename T>
         void process(std::string name, T& t){
             bool found = false;
@@ -242,25 +290,46 @@ namespace tools {
                 }
             }
         }
-        
-        void process( std::string name, std::string& var) {
+
+
+        void process( std::string name, std::string* var, size_t size = 1) {
             for (auto m: argvs) {
-                if (m.first == name) var = m.second[0];
+                if (m.first == name) {
+                    if (m.second.size() != size)
+                        LOG() << "Expect variable [" << m.first << "] to have " << size << " arguments, instread of " << m.second.size() << "\n";
+                    for (size_t i = 0; i < size; ++i)
+                        var[i] = m.second[i];
+                }
             }
         }
-        void process( std::string name, int& var) {
+        void process( std::string name, int* var, size_t size = 1) {
             for (auto m: argvs) {
-                if (m.first == name) var = std::stoi(m.second[0]);
+                if (m.first == name) {
+                    if (m.second.size() != size)
+                        LOG() << "Expect variable [" << m.first << "] to have " << size << " arguments, instread of " << m.second.size() << "\n";
+                    for (size_t i = 0; i < size; ++i)
+                        var[i] = std::stoi(m.second[i]);
+                }
             }
         }
-        void process( std::string name, float& var) {
+        void process( std::string name, float* var, size_t size = 1) {
             for (auto m: argvs) {
-                if (m.first == name) var = std::stof(m.second[0]);
+                if (m.first == name) {
+                    if (m.second.size() != size)
+                        LOG() << "Expect variable [" << m.first << "] to have " << size << " arguments, instread of " << m.second.size() << "\n";
+                    for (size_t i = 0; i < size; ++i)
+                        var[i] = std::stof(m.second[i]);
+                }
             }
         }
-        void process( std::string name, bool& var) {
+        void process( std::string name, bool* var, size_t size = 1) {
             for (auto m: argvs) {
-                if (m.first == name) var = std::stoi(m.second[0]);
+                if (m.first == name) {
+                    if (m.second.size() != size)
+                        LOG() << "Expect variable [" << m.first << "] to have " << size << " arguments, instread of " << m.second.size() << "\n";
+                    for (size_t i = 0; i < size; ++i)
+                        var[i] = std::stoi(m.second[i]);
+                }
             }
         }
     };
