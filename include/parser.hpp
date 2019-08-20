@@ -33,14 +33,14 @@ namespace tools {
     private:
         std::string msg;
     };
-    class LOG{
+    class ErrorLOG{
     public:
-        LOG(){}
+        ErrorLOG(){}
         template <typename T>
-        LOG& operator << (T const &value) {
+        ErrorLOG& operator << (T const &value) {
             msg << value;
         }
-        ~LOG(){
+        ~ErrorLOG(){
             std::string value = msg.str();
             throw ParserException(value);
         }
@@ -296,7 +296,7 @@ namespace tools {
             for (auto m: argvs) {
                 if (m.first == name) {
                     if (m.second.size() != size)
-                        LOG() << "Expect variable [" << m.first << "] to have " << size << " arguments, instread of " << m.second.size() << "\n";
+                        ErrorLOG() << "Expect variable [" << m.first << "] to have " << size << " arguments, instread of " << m.second.size() << "\n";
                     for (size_t i = 0; i < size; ++i)
                         var[i] = m.second[i];
                 }
@@ -306,7 +306,7 @@ namespace tools {
             for (auto m: argvs) {
                 if (m.first == name) {
                     if (m.second.size() != size)
-                        LOG() << "Expect variable [" << m.first << "] to have " << size << " arguments, instread of " << m.second.size() << "\n";
+                        ErrorLOG() << "Expect variable [" << m.first << "] to have " << size << " arguments, instread of " << m.second.size() << "\n";
                     for (size_t i = 0; i < size; ++i)
                         var[i] = std::stoi(m.second[i]);
                 }
@@ -316,7 +316,7 @@ namespace tools {
             for (auto m: argvs) {
                 if (m.first == name) {
                     if (m.second.size() != size)
-                        LOG() << "Expect variable [" << m.first << "] to have " << size << " arguments, instread of " << m.second.size() << "\n";
+                        ErrorLOG() << "Expect variable [" << m.first << "] to have " << size << " arguments, instread of " << m.second.size() << "\n";
                     for (size_t i = 0; i < size; ++i)
                         var[i] = std::stof(m.second[i]);
                 }
@@ -326,7 +326,7 @@ namespace tools {
             for (auto m: argvs) {
                 if (m.first == name) {
                     if (m.second.size() != size)
-                        LOG() << "Expect variable [" << m.first << "] to have " << size << " arguments, instread of " << m.second.size() << "\n";
+                        ErrorLOG() << "Expect variable [" << m.first << "] to have " << size << " arguments, instread of " << m.second.size() << "\n";
                     for (size_t i = 0; i < size; ++i)
                         var[i] = std::stoi(m.second[i]);
                 }
