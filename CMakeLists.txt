@@ -4,6 +4,8 @@ project(cxxTools CXX)
 
 INCLUDE(${PROJECT_SOURCE_DIR}/cmake/cmake_macro_install_uninstall/macro.cmake)
 
+OPTION(BUILD_TEST "Build test" OFF)
+
 # If on Mac OS X:
 IF(${CMAKE_SYSTEM} MATCHES "Darwin")
     # Make sure that C++11 warnings are disabled.
@@ -60,3 +62,8 @@ set_target_properties(${targetname} PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(${targetname} PROPERTIES CXX_STANDARD 11)
 
 INCLUDE(${PROJECT_SOURCE_DIR}/cmake/SetEasyInstall.cmake)
+
+
+IF(BUILD_TEST)
+	ADD_SUBDIRECTORY(test)
+ENDIF()

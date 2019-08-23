@@ -68,28 +68,6 @@ install/strip/fast: preinstall/fast
 	/home/deep/clion-2019.2/bin/cmake/linux/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
 .PHONY : install/strip/fast
 
-# Special rule for the target install/local
-install/local: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
-	/home/deep/clion-2019.2/bin/cmake/linux/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
-.PHONY : install/local
-
-# Special rule for the target install/local
-install/local/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
-	/home/deep/clion-2019.2/bin/cmake/linux/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
-.PHONY : install/local/fast
-
-# Special rule for the target list_install_components
-list_install_components:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"dev\" \"include\" \"lib\""
-.PHONY : list_install_components
-
-# Special rule for the target list_install_components
-list_install_components/fast: list_install_components
-
-.PHONY : list_install_components/fast
-
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
@@ -112,6 +90,28 @@ rebuild_cache/fast: rebuild_cache
 
 .PHONY : rebuild_cache/fast
 
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"dev\" \"include\" \"lib\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+
+.PHONY : list_install_components/fast
+
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/home/deep/clion-2019.2/bin/cmake/linux/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
+
+# Special rule for the target install/local
+install/local/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/home/deep/clion-2019.2/bin/cmake/linux/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local/fast
+
 # Special rule for the target install
 install: preinstall
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
@@ -126,14 +126,14 @@ install/fast: preinstall/fast
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/deep/cxxtools/cmake-build-debug/CMakeFiles /home/deep/cxxtools/cmake-build-debug/CMakeFiles/progress.marks
-	$(MAKE) -f CMakeFiles/Makefile2 all
+	cd /home/deep/cxxtools/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_progress_start /home/deep/cxxtools/cmake-build-debug/CMakeFiles /home/deep/cxxtools/cmake-build-debug/test/CMakeFiles/progress.marks
+	cd /home/deep/cxxtools/cmake-build-debug && $(MAKE) -f CMakeFiles/Makefile2 test/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/deep/cxxtools/cmake-build-debug/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	$(MAKE) -f CMakeFiles/Makefile2 clean
+	cd /home/deep/cxxtools/cmake-build-debug && $(MAKE) -f CMakeFiles/Makefile2 test/clean
 .PHONY : clean
 
 # The main clean target
@@ -143,84 +143,60 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	$(MAKE) -f CMakeFiles/Makefile2 preinstall
+	cd /home/deep/cxxtools/cmake-build-debug && $(MAKE) -f CMakeFiles/Makefile2 test/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	$(MAKE) -f CMakeFiles/Makefile2 preinstall
+	cd /home/deep/cxxtools/cmake-build-debug && $(MAKE) -f CMakeFiles/Makefile2 test/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	$(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /home/deep/cxxtools/cmake-build-debug && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
-#=============================================================================
-# Target rules for targets named uninstall
+# Convenience name for target.
+test/CMakeFiles/TEST.dir/rule:
+	cd /home/deep/cxxtools/cmake-build-debug && $(MAKE) -f CMakeFiles/Makefile2 test/CMakeFiles/TEST.dir/rule
+.PHONY : test/CMakeFiles/TEST.dir/rule
 
-# Build rule for target.
-uninstall: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 uninstall
-.PHONY : uninstall
+# Convenience name for target.
+TEST: test/CMakeFiles/TEST.dir/rule
 
-# fast build rule for target.
-uninstall/fast:
-	$(MAKE) -f CMakeFiles/uninstall.dir/build.make CMakeFiles/uninstall.dir/build
-.PHONY : uninstall/fast
-
-#=============================================================================
-# Target rules for targets named CxxTools
-
-# Build rule for target.
-CxxTools: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 CxxTools
-.PHONY : CxxTools
-
-# fast build rule for target.
-CxxTools/fast:
-	$(MAKE) -f CMakeFiles/CxxTools.dir/build.make CMakeFiles/CxxTools.dir/build
-.PHONY : CxxTools/fast
-
-#=============================================================================
-# Target rules for targets named TEST
-
-# Build rule for target.
-TEST: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 TEST
 .PHONY : TEST
 
 # fast build rule for target.
 TEST/fast:
-	$(MAKE) -f test/CMakeFiles/TEST.dir/build.make test/CMakeFiles/TEST.dir/build
+	cd /home/deep/cxxtools/cmake-build-debug && $(MAKE) -f test/CMakeFiles/TEST.dir/build.make test/CMakeFiles/TEST.dir/build
 .PHONY : TEST/fast
 
-source/PathTool.o: source/PathTool.cpp.o
+test.o: test.cpp.o
 
-.PHONY : source/PathTool.o
+.PHONY : test.o
 
 # target to build an object file
-source/PathTool.cpp.o:
-	$(MAKE) -f CMakeFiles/CxxTools.dir/build.make CMakeFiles/CxxTools.dir/source/PathTool.cpp.o
-.PHONY : source/PathTool.cpp.o
+test.cpp.o:
+	cd /home/deep/cxxtools/cmake-build-debug && $(MAKE) -f test/CMakeFiles/TEST.dir/build.make test/CMakeFiles/TEST.dir/test.cpp.o
+.PHONY : test.cpp.o
 
-source/PathTool.i: source/PathTool.cpp.i
+test.i: test.cpp.i
 
-.PHONY : source/PathTool.i
+.PHONY : test.i
 
 # target to preprocess a source file
-source/PathTool.cpp.i:
-	$(MAKE) -f CMakeFiles/CxxTools.dir/build.make CMakeFiles/CxxTools.dir/source/PathTool.cpp.i
-.PHONY : source/PathTool.cpp.i
+test.cpp.i:
+	cd /home/deep/cxxtools/cmake-build-debug && $(MAKE) -f test/CMakeFiles/TEST.dir/build.make test/CMakeFiles/TEST.dir/test.cpp.i
+.PHONY : test.cpp.i
 
-source/PathTool.s: source/PathTool.cpp.s
+test.s: test.cpp.s
 
-.PHONY : source/PathTool.s
+.PHONY : test.s
 
 # target to generate assembly for a file
-source/PathTool.cpp.s:
-	$(MAKE) -f CMakeFiles/CxxTools.dir/build.make CMakeFiles/CxxTools.dir/source/PathTool.cpp.s
-.PHONY : source/PathTool.cpp.s
+test.cpp.s:
+	cd /home/deep/cxxtools/cmake-build-debug && $(MAKE) -f test/CMakeFiles/TEST.dir/build.make test/CMakeFiles/TEST.dir/test.cpp.s
+.PHONY : test.cpp.s
 
 # Help Target
 help:
@@ -229,17 +205,15 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... install/strip"
-	@echo "... install/local"
-	@echo "... uninstall"
-	@echo "... CxxTools"
-	@echo "... list_install_components"
 	@echo "... edit_cache"
-	@echo "... rebuild_cache"
-	@echo "... install"
 	@echo "... TEST"
-	@echo "... source/PathTool.o"
-	@echo "... source/PathTool.i"
-	@echo "... source/PathTool.s"
+	@echo "... rebuild_cache"
+	@echo "... list_install_components"
+	@echo "... install/local"
+	@echo "... install"
+	@echo "... test.o"
+	@echo "... test.i"
+	@echo "... test.s"
 .PHONY : help
 
 
@@ -251,6 +225,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	$(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /home/deep/cxxtools/cmake-build-debug && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

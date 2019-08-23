@@ -134,6 +134,61 @@ clean: CMakeFiles/CxxTools.dir/clean
 .PHONY : clean
 
 #=============================================================================
+# Directory level rules for directory test
+
+# Convenience name for "all" pass in the directory.
+test/all: test/CMakeFiles/TEST.dir/all
+
+.PHONY : test/all
+
+# Convenience name for "clean" pass in the directory.
+test/clean: test/CMakeFiles/TEST.dir/clean
+
+.PHONY : test/clean
+
+# Convenience name for "preinstall" pass in the directory.
+test/preinstall:
+
+.PHONY : test/preinstall
+
+#=============================================================================
+# Target rules for target test/CMakeFiles/TEST.dir
+
+# All Build rule for target.
+test/CMakeFiles/TEST.dir/all: CMakeFiles/CxxTools.dir/all
+	$(MAKE) -f test/CMakeFiles/TEST.dir/build.make test/CMakeFiles/TEST.dir/depend
+	$(MAKE) -f test/CMakeFiles/TEST.dir/build.make test/CMakeFiles/TEST.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/deep/cxxtools/cmake-build-debug/CMakeFiles --progress-num=3,4 "Built target TEST"
+.PHONY : test/CMakeFiles/TEST.dir/all
+
+# Include target in all.
+all: test/CMakeFiles/TEST.dir/all
+
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+test/CMakeFiles/TEST.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/deep/cxxtools/cmake-build-debug/CMakeFiles 4
+	$(MAKE) -f CMakeFiles/Makefile2 test/CMakeFiles/TEST.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/deep/cxxtools/cmake-build-debug/CMakeFiles 0
+.PHONY : test/CMakeFiles/TEST.dir/rule
+
+# Convenience name for target.
+TEST: test/CMakeFiles/TEST.dir/rule
+
+.PHONY : TEST
+
+# clean rule for target.
+test/CMakeFiles/TEST.dir/clean:
+	$(MAKE) -f test/CMakeFiles/TEST.dir/build.make test/CMakeFiles/TEST.dir/clean
+.PHONY : test/CMakeFiles/TEST.dir/clean
+
+# clean rule for target.
+clean: test/CMakeFiles/TEST.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
 # Special targets to cleanup operation of make.
 
 # Special rule to run CMake to check the build system integrity.

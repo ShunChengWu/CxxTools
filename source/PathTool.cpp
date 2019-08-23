@@ -347,7 +347,7 @@ namespace tools{
     
     std::string PathTool::getFileType(std::string pathIn){
         std::string::size_type has_type = pathIn.find_last_of(".");
-        if(has_type == std::string::npos || has_type == pathIn[0]) {
+        if(has_type == std::string::npos || has_type == 0) {
             if(pathIn.back() == '/') return "folder";
             return "";
         }
