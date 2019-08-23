@@ -1,2 +1,0 @@
-/usr/bin/ar qc libCxxTools.a  CMakeFiles/CxxTools.dir/source/PathTool.cpp.o
-/usr/bin/ranlib libCxxTools.a
