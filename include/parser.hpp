@@ -39,6 +39,7 @@ namespace tools {
         template <typename T>
         ErrorLOG& operator << (T const &value) {
             msg << value;
+            return *this;
         }
         ~ErrorLOG(){
             std::string value = msg.str();
