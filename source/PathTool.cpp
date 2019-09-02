@@ -208,6 +208,7 @@ namespace tools{
 
     void PathTool::get_files_include_name_recursively (std::string path, std::string name, std::vector<std::string>& files_with_name) {
         std::vector<std::string> folders;
+        folders.push_back(path);
         while(isFolder(folders.back())) {
             auto files = get_files_in_folder(folders.back(),"", true, false);
             folders.pop_back();
