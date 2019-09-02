@@ -199,10 +199,30 @@ namespace tools{
     }
     
     void PathTool::get_files_include_name (std::string path, std::string name, std::vector<std::string>& files_with_name) {
-        auto files_all = get_files_in_folder(path, "");
+        auto files_all = get_files_in_folder(path, "", true, false);
         for (auto file: files_all) {
             auto boo = file.find(name);
             if (boo != std::string::npos) files_with_name.push_back(file);
+        }
+    }
+
+    void PathTool::get_files_include_name_recursively (std::string path, std::string name, std::vector<std::string>& files_with_name) {
+        std::vector<std::string> folders;
+        while(isFolder(folders.back())) {
+            auto files = get_files_in_folder(folders.back(),"", true, false);
+            folders.pop_back();
+
+            for(const auto &p : files) {
+                if(getFileType(p) == "") { //folder
+                    folders.push_back(std::move(p));
+                    continue;
+                }
+                if(p.find(name) != std::string::npos) { // bin
+                    files_with_name.push_back(std::move(p));
+                    continue;
+                }
+            }
+            if(folders.empty()) break;
         }
     }
     
@@ -215,6 +235,8 @@ namespace tools{
         }
         return files_with_name;
     }
+
+
     
     void PathTool::check_and_delete_folder (const std::string& path){
         std::string tmp = path;
@@ -321,6 +343,12 @@ namespace tools{
                 input.erase(a, charact.size());
             }
         } while (a != std::string::npos);
+
+
+    }
+
+    void erase_charecter(std::string &input, char ch){
+        input.erase(std::remove(input.begin(),input.end(), ch), input.end()); /// remove space
     }
     
     void PathTool::replace_chracter(std::string& input, std::string charact, std::string with_this){

@@ -49,6 +49,8 @@ namespace tools {
         std::string get_current_dir_name(std::string path);
         
         void get_files_include_name (std::string path, std::string name, std::vector<std::string>& files_with_name);
+        void get_files_include_name_recursively (std::string path, std::string name, std::vector<std::string>& files_with_name);
+
         std::vector<std::string> get_files_include_name (std::string path, std::string name);
         void check_and_delete_folder (const std::string& path);
         void check_and_create_folder (const std::string& path);
@@ -58,7 +60,7 @@ namespace tools {
         char* string2char(std::string string);
         
         /**
-         This function will search all the files with given type within path.
+         This function will search all the files with given type within path (including folder, if no type is given).
          @param path The path to the folder you want to search
          @param type The type you want to search
          @param return_full Set true to return full path
@@ -68,6 +70,7 @@ namespace tools {
         std::vector<std::string> get_files_in_folder (std::string path, std::string type = "", bool return_full = false, bool sort = true);
         
         void erase_chracter(std::string& input, std::string charact);
+        void erase_charecter(std::string &input, char ch);
         void replace_chracter(std::string& input, std::string charact, std::string with_this);
         /// remove file type. if type not given, remove the string after "."
         std::string remove_file_type (std::string path, std::string type="");
