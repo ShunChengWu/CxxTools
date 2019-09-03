@@ -132,7 +132,7 @@ namespace tools{
                 printf ("\r[%.*s%*s] %3d%% ET: %4.0f(s)", lpad, pbstr.c_str(), rpad, "", val, sec_left);
                 fflush (stdout);
             }
-            printf("\n")
+            printf("\n");
         }
         
         size_t checkTaskLeft(){return tasks_.size();}
