@@ -329,7 +329,7 @@ namespace tools {
                     if (m.second.size() != size)
                         ErrorLOG() << "Expect variable [" << m.first << "] to have " << size << " arguments, instread of " << m.second.size() << "\n";
                     for (size_t i = 0; i < size; ++i)
-                        var[i] = std::stoi(m.second[i]);
+                        var[i] = std::stoi(m.second[i]) > 0;
                 }
             }
         }
