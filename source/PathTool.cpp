@@ -365,14 +365,15 @@ namespace tools{
     }
     
     std::string PathTool::remove_file_type (std::string path, std::string type) {
-        if (type != "") {
+        if (!type.empty()) {
             //std::string::size_type has_type = path.find_last_of(type);
             //assert(has_type != std::string::npos);
             return path.substr(0, path.size()-type.size());
         } else {
             std::string::size_type has_type = path.find_last_of(".");
-            //assert(has_type != std::string::npos);
-            return path.substr(0, has_type);
+            if(has_type != std::string::npos)
+                return path.substr(0, has_type);
+            return path;
         }
     }
     
