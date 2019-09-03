@@ -52,7 +52,7 @@ namespace tools{
     }
 
     std::string PathTool::find_parent_folder(std::string input, int times){
-        assert(input.size()!=0 && "input size is zero");
+        if(input.empty()) return "";
         std::string output;
         if(input[input.size()-1] == '/') //input.pop_back();
         input = input.substr(0, input.length()-1);
