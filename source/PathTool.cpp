@@ -371,7 +371,7 @@ namespace tools{
             return path.substr(0, path.size()-type.size());
         } else {
             std::string::size_type has_type = path.find_last_of(".");
-            if(has_type != std::string::npos)
+            if(has_type != std::string::npos && has_type != 0)
                 return path.substr(0, has_type);
             return path;
         }
