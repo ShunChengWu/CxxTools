@@ -247,6 +247,8 @@ namespace tools{
     }
     
     void PathTool::check_and_create_folder (const std::string& path){
+        if(path.empty())
+            return;;
         std::string tmp = path;
         bool isFolder = this->isFolder(tmp);
         if(!isFolder) tmp = this->find_parent_folder(tmp);
