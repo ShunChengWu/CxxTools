@@ -48,8 +48,10 @@ namespace tools {
         std::string find_parent_folder_name(const std::string& path);
         std::string get_current_dir_name(std::string path);
         
-        void get_files_include_name (std::string path, std::string name, std::vector<std::string>& files_with_name);
-        void get_files_include_name_recursively (std::string path, std::string name, std::vector<std::string>& files_with_name);
+        void get_files_include_name (std::string path, const std::string& name, std::vector<std::string>& files_with_name);
+        void get_files_include_name_recursively (const std::string& path, const std::string& name, std::vector<std::string>& files_with_name);
+        
+        void get_folders_include_name_recursively (const std::string& path, const std::string& name, std::vector<std::string>& folders_with_name);
 
         std::vector<std::string> get_files_include_name (std::string path, std::string name);
         void check_and_delete_folder (const std::string& path);

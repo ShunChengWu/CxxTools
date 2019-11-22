@@ -198,7 +198,7 @@ namespace tools{
         return output;
     }
     
-    void PathTool::get_files_include_name (std::string path, std::string name, std::vector<std::string>& files_with_name) {
+    void PathTool::get_files_include_name (std::string path, const std::string& name, std::vector<std::string>& files_with_name) {
         auto files_all = get_files_in_folder(path, "", true, false);
         for (auto file: files_all) {
             auto boo = file.find(name);
@@ -206,7 +206,7 @@ namespace tools{
         }
     }
 
-    void PathTool::get_files_include_name_recursively (std::string path, std::string name, std::vector<std::string>& files_with_name) {
+    void PathTool::get_files_include_name_recursively (const std::string& path, const std::string& name, std::vector<std::string>& files_with_name) {
         std::vector<std::string> folders;
         folders.push_back(path);
         while(isFolder(folders.back())) {
@@ -220,6 +220,27 @@ namespace tools{
                 }
                 if(p.find(name) != std::string::npos) { // bin
                     files_with_name.push_back(std::move(p));
+                    continue;
+                }
+            }
+            if(folders.empty()) break;
+        }
+    }
+
+    void PathTool::get_folders_include_name_recursively (const std::string& path, const std::string& name, std::vector<std::string>& folders_with_name){
+        std::vector<std::string> folders;
+        folders.push_back(path);
+        while(isFolder(folders.back())) {
+            auto files = get_files_in_folder(folders.back(),"", true, false);
+
+            if(get_current_dir_name(folders.back()).find(name) != std::string::npos) { // bin
+                folders_with_name.push_back(folders.back());
+            }
+            folders.pop_back();
+
+            for(const auto &p : files) {
+                if(isFolder(p)) { //folder
+                    folders.push_back(p);
                     continue;
                 }
             }
