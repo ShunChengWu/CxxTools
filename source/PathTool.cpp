@@ -215,11 +215,11 @@ namespace tools{
 
             for(const auto &p : files) {
                 if(getFileType(p) == "") { //folder
-                    folders.push_back(std::move(p));
+                    folders.push_back(p);
                     continue;
                 }
                 if(p.find(name) != std::string::npos) { // bin
-                    files_with_name.push_back(std::move(p));
+                    files_with_name.push_back(p);
                     continue;
                 }
             }
@@ -247,8 +247,16 @@ namespace tools{
             if(folders.empty()) break;
         }
     }
-    
-    std::vector<std::string> PathTool::get_files_include_name (std::string path, std::string name){
+    void PathTool::get_targetFile_in_targetFolder_recursively (const std::string& path, const std::string& folderName, const std::string& fileName, std::vector<std::string>& target_files_in_target_folders){
+        std::vector<std::string> files;
+        get_files_include_name_recursively(path, fileName, files);
+        for(const auto& f : files) {
+            auto tmp = find_parent_folder(f);
+            if(getFileName(tmp) == folderName) target_files_in_target_folders.push_back(f);
+        }
+    }
+
+    std::vector<std::string> PathTool::get_files_include_name (std::string path, const std::string& name){
         std::vector<std::string> files_with_name;
         auto files_all = get_files_in_folder(path, "");
         for (auto file: files_all) {
@@ -318,7 +326,7 @@ namespace tools{
         }
     }
     
-    char* PathTool::string2char (std::string string){
+    char* PathTool::string2char (const std::string& string){
         char *cstr = new char[string.length() + 1];
         strcpy(cstr, string.c_str());
         // do stuff
@@ -326,7 +334,7 @@ namespace tools{
         delete [] cstr;//?
     }
     
-    std::vector<std::string> PathTool::get_files_in_folder (std::string path, std::string type, bool return_full, bool sort){
+    std::vector<std::string> PathTool::get_files_in_folder (std::string path, const std::string& type, bool return_full, bool sort){
         std::vector<std::string> file_vec;
         DIR *dir;
         struct dirent *ent;
@@ -342,8 +350,9 @@ namespace tools{
             closedir (dir);
         } else {
             /* could not open directory */
-            perror ("");
-            EXIT_FAILURE;
+//            perror ("");
+//            EXIT_FAILURE;
+            return file_vec;
         }
         if (sort) std::sort(file_vec.begin(),file_vec.end());
         

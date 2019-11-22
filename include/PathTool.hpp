@@ -50,16 +50,16 @@ namespace tools {
         
         void get_files_include_name (std::string path, const std::string& name, std::vector<std::string>& files_with_name);
         void get_files_include_name_recursively (const std::string& path, const std::string& name, std::vector<std::string>& files_with_name);
-        
         void get_folders_include_name_recursively (const std::string& path, const std::string& name, std::vector<std::string>& folders_with_name);
+        void get_targetFile_in_targetFolder_recursively (const std::string& path, const std::string& folderName, const std::string& fileName, std::vector<std::string>& folders_with_name);
 
-        std::vector<std::string> get_files_include_name (std::string path, std::string name);
+        std::vector<std::string> get_files_include_name (std::string path, const std::string& name);
         void check_and_delete_folder (const std::string& path);
         void check_and_create_folder (const std::string& path);
         /** Check whether folder exist. If not, create it. */
         void create_folder(std::string name);
         
-        char* string2char(std::string string);
+        static char* string2char(const std::string& string);
         
         /**
          This function will search all the files with given type within path (including folder, if no type is given).
@@ -69,7 +69,7 @@ namespace tools {
          @param sort Set true the sort the result
          @return Return a vector
          */
-        std::vector<std::string> get_files_in_folder (std::string path, std::string type = "", bool return_full = false, bool sort = true);
+        std::vector<std::string> get_files_in_folder (std::string path, const std::string& type = "", bool return_full = false, bool sort = true);
         
         void erase_chracter(std::string& input, std::string charact);
         void erase_charecter(std::string &input, char ch);
