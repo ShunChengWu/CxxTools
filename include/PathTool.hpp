@@ -60,7 +60,8 @@ namespace tools {
         void create_folder(std::string name);
         
         static char* string2char(const std::string& string);
-        
+
+        static inline bool isdigit(const std::string &string);
         /**
          This function will search all the files with given type within path (including folder, if no type is given).
          @param path The path to the folder you want to search

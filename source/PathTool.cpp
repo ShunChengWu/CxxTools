@@ -333,14 +333,38 @@ namespace tools{
         return cstr;
         delete [] cstr;//?
     }
-    
+
+    inline bool PathTool::isdigit(const std::string &string) {
+        return std::count_if(string.begin(), string.end(), [](unsigned char c){ return std::isdigit(c); }) == string.length();
+    }
+
+    struct digit_sort
+    {
+        inline bool operator() (const std::string& struct1, const std::string& struct2)
+        {
+            auto getFileName = [](const std::string &path) ->std::string {
+                // get filename
+                auto lastDot = path.find_last_of('.');
+                auto lastRightSlash = path.find_last_of('/');
+                if(lastDot == std::string::npos)
+                    return std::string("");
+                if(lastRightSlash == std::string::npos)
+                    return std::string("");
+                return path.substr(lastRightSlash+1, lastRightSlash-lastDot-1);
+            };
+            auto name1 = std::stoi(getFileName(struct1));
+            auto name2 = std::stoi(getFileName(struct2));
+            return (name1 < name2);
+        }
+    };
+
     std::vector<std::string> PathTool::get_files_in_folder (std::string path, const std::string& type, bool return_full, bool sort){
         std::vector<std::string> file_vec;
         DIR *dir;
         struct dirent *ent;
-        if ((dir = opendir (path.c_str())) != NULL) {
+        if ((dir = opendir (path.c_str())) != nullptr) {
             path = CheckEnd(path);
-            while ((ent = readdir (dir)) != NULL) {
+            while ((ent = readdir (dir)) != nullptr) {
                 if (ent->d_name[0] != '.') {
                     /* print all the files and directories within directory */
                     //printf ("%s\n", ent->d_name);
@@ -350,16 +374,31 @@ namespace tools{
             closedir (dir);
         } else {
             /* could not open directory */
-//            perror ("");
-//            EXIT_FAILURE;
-            return file_vec;
+            perror ("");
+            EXIT_FAILURE;
         }
-        if (sort) std::sort(file_vec.begin(),file_vec.end());
-        
-        if(type == "") return file_vec;
-        
+        if (sort) {
+            bool allDigit = true;
+            for(auto p:file_vec){
+                // get filename
+                auto name = getFileName(p);
+
+                if(!isdigit(name)) {
+                    allDigit = false;
+                    break;
+                }
+            }
+
+            if(allDigit)
+                std::sort(file_vec.begin(),file_vec.end(), digit_sort());
+            else
+                std::sort(file_vec.begin(),file_vec.end());
+        }
+
+        if(type.empty()) return file_vec;
+
         std::vector<std::string> filtered;
-        for (auto name: file_vec) {
+        for (const auto& name: file_vec) {
             if(name.size() > type.size()) {
                 std::string tmp = name.substr(name.size()-type.size(), type.size());
                 if (tmp == type) filtered.push_back(name);
