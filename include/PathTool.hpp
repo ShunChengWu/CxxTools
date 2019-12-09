@@ -36,28 +36,28 @@
 namespace tools {
     class PathTool{
     public:
-        PathTool(){}
+        PathTool()= default;
         //Folder related
-        std::string get_executable_path ();
+        static std::string get_executable_path ();
         /// if times=0, return itself, 1 the first parent folder. In the case of given file path, 1 will return it's folder
-        std::string find_parent_folder(std::string input, int times=1);
+        static std::string find_parent_folder(std::string input, int times=1);
         /** if success? 0: -1 */
-        int remove_directory(const char *path);
-        bool checkfileexist(const std::string& filename);
-        bool checkfolderexist(const std::string& output_db_name);
-        std::string find_parent_folder_name(const std::string& path);
-        std::string get_current_dir_name(std::string path);
+        static int remove_directory(const char *path);
+        static bool checkfileexist(const std::string& filename);
+        static bool checkfolderexist(const std::string& output_db_name);
+        static std::string find_parent_folder_name(const std::string& path);
+        static std::string get_current_dir_name(std::string path);
         
-        void get_files_include_name (std::string path, const std::string& name, std::vector<std::string>& files_with_name);
-        void get_files_include_name_recursively (const std::string& path, const std::string& name, std::vector<std::string>& files_with_name);
-        void get_folders_include_name_recursively (const std::string& path, const std::string& name, std::vector<std::string>& folders_with_name);
-        void get_targetFile_in_targetFolder_recursively (const std::string& path, const std::string& folderName, const std::string& fileName, std::vector<std::string>& folders_with_name);
+        static void get_files_include_name (std::string path, const std::string& name, std::vector<std::string>& files_with_name);
+        static void get_files_include_name_recursively (const std::string& path, const std::string& name, std::vector<std::string>& files_with_name);
+        static void get_folders_include_name_recursively (const std::string& path, const std::string& name, std::vector<std::string>& folders_with_name);
+        static void get_targetFile_in_targetFolder_recursively (const std::string& path, const std::string& folderName, const std::string& fileName, std::vector<std::string>& folders_with_name);
 
-        std::vector<std::string> get_files_include_name (std::string path, const std::string& name);
-        void check_and_delete_folder (const std::string& path);
-        void check_and_create_folder (const std::string& path);
+        static std::vector<std::string> get_files_include_name (std::string path, const std::string& name);
+        static void check_and_delete_folder (const std::string& path);
+        static void check_and_create_folder (const std::string& path);
         /** Check whether folder exist. If not, create it. */
-        void create_folder(std::string name);
+        static void create_folder(std::string name);
         
         static char* string2char(const std::string& string);
 
@@ -70,29 +70,29 @@ namespace tools {
          @param sort Set true the sort the result
          @return Return a vector
          */
-        std::vector<std::string> get_files_in_folder (std::string path, const std::string& type = "", bool return_full = false, bool sort = true);
-        
-        void erase_chracter(std::string& input, std::string charact);
-        void erase_charecter(std::string &input, char ch);
-        void replace_chracter(std::string& input, std::string charact, std::string with_this);
+        static std::vector<std::string> get_files_in_folder (std::string path, const std::string& type = "", bool return_full = false, bool sort = true);
+
+        static void erase_chracter(std::string& input, std::string charact);
+        static void erase_charecter(std::string &input, char ch);
+        static void replace_chracter(std::string& input, std::string charact, std::string with_this);
         /// remove file type. if type not given, remove the string after "."
-        std::string remove_file_type (std::string path, std::string type="");
+        static std::string remove_file_type (std::string path, std::string type="");
         /// get File type
-        std::string getFileType(std::string pathIn);
+        static std::string getFileType(std::string pathIn);
         /// Get total lines in the file
-        int GetTotalLines(std::string file_path);
-        
-        std::vector<std::string> splitbychar(std::string line);
-        
-        std::string getFileName(std::string pthIn);
-        
-        std::string CheckEnd(std::string path);
+        static int GetTotalLines(std::string file_path);
+
+        static std::vector<std::string> splitbychar(std::string line);
+
+        static std::string getFileName(std::string pthIn);
+
+        static std::string CheckEnd(std::string path);
         /// Break input string into tokens using the given delimiter
-        std::vector<std::string> splitLine(std::string s, char delimiter);
+        static std::vector<std::string> splitLine(std::string s, char delimiter);
 
-        std::string addWaterSerialNumber(std::string path);
+        static std::string addWaterSerialNumber(std::string path);
 
-        bool isFolder(std::string path);
+        static bool isFolder(std::string path);
     };
     
 } //End of namespace Tools

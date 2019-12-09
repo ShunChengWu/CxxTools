@@ -13,12 +13,11 @@ TEST(IO, find_folders_recursively_with_name){
 }
 
 TEST(IO, get_targetFile_in_targetFolder_recursively){
-    tools::PathTool pathTool;
     std::string path = "/media/sc/BackupDesk/SCSLAM/Result";
     std::string targetFolderName = "OFu";
     std::string targetFileName = "Summary.txt";
     std::vector<std::string> output;
-    pathTool.get_targetFile_in_targetFolder_recursively(path,targetFolderName,targetFileName, output);
+    tools::PathTool::get_targetFile_in_targetFolder_recursively(path,targetFolderName,targetFileName, output);
 
     for(auto p : output){
         printf("%s\n", p.c_str());
@@ -27,10 +26,23 @@ TEST(IO, get_targetFile_in_targetFolder_recursively){
 
 TEST(IO, sort) {
     /// Test for number order file/0.jpg file/1.jpg should be sorted correctly.
-    tools::PathTool pathTool;
-    auto paths = pathTool.get_files_in_folder("/media/sc/SSD1TB/dataset/SceneNet/SceneNetRGBD-val/val/0/0/photo/","",true,true);
-      for(auto path : paths)
+    auto paths = tools::PathTool::get_files_in_folder("/media/sc/SSD1TB/dataset/SceneNet/SceneNetRGBD-val/val/0/0/photo/","",true,true);
+      for(const auto& path : paths)
           printf("%s\n", path.c_str());
+}
+
+
+TEST(IO, getFileType) {
+    const std::vector<std::pair<std::string, std::string>> situations = {
+            {".", ""},
+            {"./", ""},
+            {"./HELLO.cpp", ".cpp"},
+            {"./Hello.io/main.cpp", ".cpp"}
+    };
+
+    for(const auto &st:situations) {
+        EXPECT_EQ(tools::PathTool::getFileType(st.first), st.second);
+    }
 }
 
 int main(int argc, char ** argv){

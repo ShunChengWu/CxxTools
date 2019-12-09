@@ -270,8 +270,8 @@ namespace tools{
     
     void PathTool::check_and_delete_folder (const std::string& path){
         std::string tmp = path;
-        bool isFolder = this->isFolder(tmp);
-        if(!isFolder) tmp = this->find_parent_folder(tmp);
+        bool isFolder = PathTool::isFolder(tmp);
+        if(!isFolder) tmp = PathTool::find_parent_folder(tmp);
         if(checkfolderexist(tmp)) remove_directory(tmp.c_str());
     }
     
@@ -279,18 +279,18 @@ namespace tools{
         if(path.empty())
             return;;
         std::string tmp = path;
-        bool isFolder = this->isFolder(tmp);
-        if(!isFolder) tmp = this->find_parent_folder(tmp);
+        bool isFolder = PathTool::isFolder(tmp);
+        if(!isFolder) tmp = PathTool::find_parent_folder(tmp);
         if(!checkfolderexist(tmp))create_folder(tmp);
     }
     
     void PathTool::create_folder(std::string name){
-        bool isFolder = this->isFolder(name);
+        bool isFolder = PathTool::isFolder(name);
         if(!isFolder) {
             printf("[Warning][PathTool::create_folder] Input path has file type! Remove file type first! You can use remove_file_type() function.\n");
             return;
         }
-        name = this->CheckEnd(name);
+        name = PathTool::CheckEnd(name);
 
 //#ifdef WIN32
 //        _mkdir(name.c_str());
@@ -447,12 +447,15 @@ namespace tools{
     }
     
     std::string PathTool::getFileType(std::string pathIn){
-        std::string::size_type has_type = pathIn.find_last_of(".");
-        if(has_type == std::string::npos || has_type == 0) {
-            if(pathIn.back() == '/') return "";
+        if(pathIn.back() == '/') return ""; // is folder
+        std::string::size_type last_dot = pathIn.find_last_of('.');
+        std::string::size_type last_slash = pathIn.find_last_of('/');
+        if(last_slash != std::string::npos && last_dot != std::string::npos) { // middle path contains '.' in name
+            if(last_slash > last_dot) return  "";
+        } else if(last_dot == std::string::npos || last_dot == 0) { // cannot find '.' or . is the last
             return "";
         }
-        return pathIn.substr(has_type, pathIn.size());
+        return pathIn.substr(last_dot, pathIn.size());
     }
     
     int PathTool::GetTotalLines(std::string file_path){
