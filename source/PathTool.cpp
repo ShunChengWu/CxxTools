@@ -7,6 +7,7 @@
 //
 
 #include <PathTool.hpp>
+#include <utility>
 #include <vector>
 #include <assert.h>
 #include <fstream>
@@ -55,7 +56,7 @@ namespace tools{
         if(input.empty()) return "";
         std::string output;
         if(input[input.size()-1] == '/') //input.pop_back();
-        input = input.substr(0, input.length()-1);
+            input = input.substr(0, input.length()-1);
         //        int count=2;//it's 2 because of '/' at the end and the wanted position
         //        int num=0;
         //        for (int i = input.size() - 1; i !=0; --i){
@@ -71,12 +72,12 @@ namespace tools{
         //        return output.assign(input, 0, input.size()-count);
         output = input;
         for (int i = 0; i < times; ++i){
-            size_t temp = output.find_last_of("/");
+            size_t temp = output.find_last_of('/');
             if (temp == std::string::npos){
                 printf("[warning] Reach the most previous folder.");
                 break;
             }
-            output.assign(output, 0, output.find_last_of("/"));
+            output.assign(output, 0, output.find_last_of('/'));
         }
         return output;
     }
@@ -167,18 +168,7 @@ namespace tools{
         //        const char* folderr = output_db_name;
         //        folderr = output_db_name;
         struct stat sb;
-        if (stat(output_db_name.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))
-        {
-            //            printf("YES\n");
-            //            remove(output_db_name.c_str());
-            //            remove_directory(output_db_name.c_str());
-            return true;
-        }
-        else
-        {
-            return false;
-            //            printf("NO\n");
-        }
+        return stat(output_db_name.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode);
 #endif
     }
     
@@ -199,8 +189,8 @@ namespace tools{
     }
     
     void PathTool::get_files_include_name (std::string path, const std::string& name, std::vector<std::string>& files_with_name) {
-        auto files_all = get_files_in_folder(path, "", true, false);
-        for (auto file: files_all) {
+        auto files_all = get_files_in_folder(std::move(path), "", true, false);
+        for (const auto& file: files_all) {
             auto boo = file.find(name);
             if (boo != std::string::npos) files_with_name.push_back(file);
         }
@@ -214,7 +204,7 @@ namespace tools{
             folders.pop_back();
 
             for(const auto &p : files) {
-                if(getFileType(p) == "") { //folder
+                if(getFileType(p).empty()) { //folder
                     folders.push_back(p);
                     continue;
                 }
@@ -258,8 +248,8 @@ namespace tools{
 
     std::vector<std::string> PathTool::get_files_include_name (std::string path, const std::string& name){
         std::vector<std::string> files_with_name;
-        auto files_all = get_files_in_folder(path, "");
-        for (auto file: files_all) {
+        auto files_all = get_files_in_folder(std::move(path), "");
+        for (const auto& file: files_all) {
             auto boo = file.find(name);
             if (boo != std::string::npos) files_with_name.push_back(file);
         }
@@ -407,7 +397,7 @@ namespace tools{
         return filtered;
     }
     
-    void PathTool::erase_chracter(std::string& input, std::string charact){
+    void PathTool::erase_chracter(std::string& input, const std::string& charact){
         size_t a = input.find(charact);
         do {
             a = input.find(charact);
@@ -423,7 +413,7 @@ namespace tools{
         input.erase(std::remove(input.begin(),input.end(), ch), input.end()); /// remove space
     }
     
-    void PathTool::replace_chracter(std::string& input, std::string charact, std::string with_this){
+    void PathTool::replace_chracter(std::string& input, const std::string& charact, const std::string& with_this){
         size_t a = input.find(charact);
         do {
             a = input.find(charact);
@@ -433,13 +423,13 @@ namespace tools{
         } while (a != std::string::npos);
     }
     
-    std::string PathTool::remove_file_type (std::string path, std::string type) {
+    std::string PathTool::remove_file_type (std::string path, const std::string& type) {
         if (!type.empty()) {
             //std::string::size_type has_type = path.find_last_of(type);
             //assert(has_type != std::string::npos);
             return path.substr(0, path.size()-type.size());
         } else {
-            std::string::size_type has_type = path.find_last_of(".");
+            std::string::size_type has_type = path.find_last_of('.');
             if(has_type != std::string::npos && has_type != 0)
                 return path.substr(0, has_type);
             return path;
@@ -458,12 +448,12 @@ namespace tools{
         return pathIn.substr(last_dot, pathIn.size());
     }
     
-    int PathTool::GetTotalLines(std::string file_path){
+    int PathTool::GetTotalLines(const std::string& file_path){
         std::string line;
         std::fstream myfile;
         myfile.open(file_path.c_str());
         int counter=-1;
-        assert(myfile.is_open()==true && "Unable to open file");
+        assert(myfile.is_open() && "Unable to open file");
         do {
             counter++;
             getline(myfile,line,'\n');
@@ -476,15 +466,15 @@ namespace tools{
         char* token;
         erase_chracter(line, "\r");
         token = strtok(string2char(line), "\t ,");
-        while (token!=NULL) {
-            data.push_back(token);
-            token = strtok(NULL, "\t ,");
+        while (token!=nullptr) {
+            data.emplace_back(token);
+            token = strtok(nullptr, "\t ,");
         }
         return data;
     }
     
     std::string PathTool::getFileName(std::string pthIn){
-        return remove_file_type(get_current_dir_name(pthIn));
+        return remove_file_type(get_current_dir_name(std::move(pthIn)));
     }
     
     std::string PathTool::CheckEnd(std::string path){
@@ -497,24 +487,24 @@ namespace tools{
     }
 
 
-    std::vector<std::string> PathTool::splitLine(std::string s, char delimiter)
+    std::vector<std::string> PathTool::splitLine(const std::string& s, char delimiter)
     {
         std::vector<std::string> tokens;
         std::string token;
         std::istringstream tokenStream(s);
         while (std::getline(tokenStream, token, delimiter))
         {
-            if(token != "")
+            if(!token.empty())
                 tokens.push_back(token);
         }
         return tokens;
     }
 
-    std::string PathTool::addWaterSerialNumber(std::string path){
+    std::string PathTool::addWaterSerialNumber(const std::string& path){
         std::string path_new = path;
         bool exist = false;
         std::string type = getFileType(path);
-        bool isFolder = type == "";
+        bool isFolder = type.empty();
 
         size_t counter=0;
         if(isFolder) {
@@ -536,8 +526,13 @@ namespace tools{
         return  path_new;
     }
 
-    bool PathTool::isFolder(std::string path){
+    bool PathTool::isFolder(const std::string &path){
         std::string type = getFileType(path);
-        return type == "";
+        return type.empty();
+    }
+
+    bool PathTool::isNumber(const std::string &s){
+        return !s.empty() && std::find_if(s.begin(),
+                                          s.end(), [](char c) { return !std::isdigit(c); }) == s.end();
     }
 }

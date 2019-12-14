@@ -72,15 +72,15 @@ namespace tools {
          */
         static std::vector<std::string> get_files_in_folder (std::string path, const std::string& type = "", bool return_full = false, bool sort = true);
 
-        static void erase_chracter(std::string& input, std::string charact);
+        static void erase_chracter(std::string& input, const std::string& charact);
         static void erase_charecter(std::string &input, char ch);
-        static void replace_chracter(std::string& input, std::string charact, std::string with_this);
+        static void replace_chracter(std::string& input, const std::string& charact, const std::string& with_this);
         /// remove file type. if type not given, remove the string after "."
-        static std::string remove_file_type (std::string path, std::string type="");
+        static std::string remove_file_type (std::string path, const std::string& type="");
         /// get File type
         static std::string getFileType(std::string pathIn);
         /// Get total lines in the file
-        static int GetTotalLines(std::string file_path);
+        static int GetTotalLines(const std::string& file_path);
 
         static std::vector<std::string> splitbychar(std::string line);
 
@@ -88,11 +88,12 @@ namespace tools {
 
         static std::string CheckEnd(std::string path);
         /// Break input string into tokens using the given delimiter
-        static std::vector<std::string> splitLine(std::string s, char delimiter);
+        static std::vector<std::string> splitLine(const std::string& s, char delimiter);
 
-        static std::string addWaterSerialNumber(std::string path);
+        static std::string addWaterSerialNumber(const std::string& path);
 
-        static bool isFolder(std::string path);
+        static bool isFolder(const std::string &path);
+        static bool isNumber(const std::string &path);
     };
     
 } //End of namespace Tools
