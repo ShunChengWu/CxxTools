@@ -45,6 +45,12 @@ TEST(IO, getFileType) {
     }
 }
 
+
+//TEST(IO, get_files){
+//std::string path = "/media/sc/SSD1TB/TrainingData/SceneNet/train";
+//    size_t t = tools::PathTool::get_files_in_folder(path).size();
+//}
+
 int main(int argc, char ** argv){
     testing::InitGoogleTest(&argc,argv);
     return RUN_ALL_TESTS();

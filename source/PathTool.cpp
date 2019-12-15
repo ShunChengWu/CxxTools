@@ -57,27 +57,17 @@ namespace tools{
         std::string output;
         if(input[input.size()-1] == '/') //input.pop_back();
             input = input.substr(0, input.length()-1);
-        //        int count=2;//it's 2 because of '/' at the end and the wanted position
-        //        int num=0;
-        //        for (int i = input.size() - 1; i !=0; --i){
-        //            if(input[i-1] != '/') {
-        //                count++;
-        //            } else {
-        //                ++num;
-        //            }
-        //            if (num == times) {
-        //                break;
-        //            }
-        //        }
-        //        return output.assign(input, 0, input.size()-count);
         output = input;
         for (int i = 0; i < times; ++i){
             size_t temp = output.find_last_of('/');
             if (temp == std::string::npos){
-                printf("[warning] Reach the most previous folder.");
+//                printf("[warning] Reach the most previous folder.");
+//                return "";
                 break;
             }
-            output.assign(output, 0, output.find_last_of('/'));
+            size_t first = output.find_first_of('/');
+            if(first == temp) return ""; // no file name
+            output.assign(output, 0, temp);
         }
         return output;
     }
@@ -182,6 +172,8 @@ namespace tools{
     std::string PathTool::get_current_dir_name(std::string path){
         std::string output, tmp;
         tmp = find_parent_folder(path, 1);
+        if(tmp.empty()) return ""; // no parent
+        if(tmp.size() == path.size()) return path; // is name already.
         if(path[path.size()-1] == '/') //path.pop_back();
             path = path.substr(0, path.length()-1);
         output = path.substr(tmp.size()+1, path.size() - tmp.size());
@@ -339,7 +331,7 @@ namespace tools{
                 if(lastDot == std::string::npos)
                     return std::string("");
                 if(lastRightSlash == std::string::npos)
-                    return std::string("");
+                    return path.substr(0, lastDot);
                 return path.substr(lastRightSlash+1, lastRightSlash-lastDot-1);
             };
             auto name1 = std::stoi(getFileName(struct1));
@@ -369,7 +361,7 @@ namespace tools{
         }
         if (sort) {
             bool allDigit = true;
-            for(auto p:file_vec){
+            for(const auto& p:file_vec){
                 // get filename
                 auto name = getFileName(p);
 
