@@ -95,7 +95,7 @@ namespace tools {
                     process(name, var, command.size);
                     command.handled = true;
                 } else if (find_switch(name)) {
-                    *var = !(*var);
+                    *var = *var > 0? 0:1;
                     command.handled = true;
                 }
             }

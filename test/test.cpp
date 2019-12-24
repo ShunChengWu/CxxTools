@@ -51,10 +51,13 @@ TEST(IO, getFileType) {
 
 TEST(Parser, SWITCH) {
     bool foo = false;
+    int too = 1;
     tools::Parser parser(my_argc,my_argv);
     parser.addOption(pkgname(&foo), "foo",false);
+    parser.addOption(pkgname(&too), "foo",false);
 
     printf("Foo: %s\n", foo?"True":"False");
+    printf("too: %d\n", too);
 
 }
 
