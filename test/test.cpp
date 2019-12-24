@@ -52,9 +52,15 @@ TEST(IO, getFileType) {
 TEST(Parser, SWITCH) {
     bool foo = false;
     int too = 1;
+    float f=1;
+    std::string s="2";
+    uint ui = 1;
     tools::Parser parser(my_argc,my_argv);
     parser.addOption(pkgname(&foo), "foo",false);
     parser.addOption(pkgname(&too), "foo",false);
+    parser.addOption(pkgname(&f), "foo",false);
+    parser.addOption(pkgname(&s), "foo",false);
+    parser.addOption(pkgname(&ui), "foo",false);
 
     printf("Foo: %s\n", foo?"True":"False");
     printf("too: %d\n", too);
