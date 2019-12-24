@@ -1,5 +1,9 @@
 #include <gtest/gtest.h>
 #include "../include/PathTool.hpp"
+#include "../include/parser.hpp"
+int my_argc;
+char** my_argv;
+
 TEST(IO, find_folders_recursively_with_name){
     tools::PathTool pathTool;
     std::string path = "/media/sc/BackupDesk/SCSLAM/Result/ReprojectionError";
@@ -45,6 +49,14 @@ TEST(IO, getFileType) {
     }
 }
 
+TEST(Parser, SWITCH) {
+    bool foo = false;
+    tools::Parser parser(my_argc,my_argv);
+    parser.addOption(pkgname(&foo), "foo",false);
+
+    printf("Foo: %s\n", foo?"True":"False");
+
+}
 
 //TEST(IO, get_files){
 //std::string path = "/media/sc/SSD1TB/TrainingData/SceneNet/train";
@@ -53,5 +65,7 @@ TEST(IO, getFileType) {
 
 int main(int argc, char ** argv){
     testing::InitGoogleTest(&argc,argv);
+    my_argc = argc;
+    my_argv = argv;
     return RUN_ALL_TESTS();
 }

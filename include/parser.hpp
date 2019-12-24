@@ -94,6 +94,9 @@ namespace tools {
                 if(find_parse(name)){
                     process(name, var, command.size);
                     command.handled = true;
+                } else if (find_switch(name)) {
+                    *var = !(*var);
+                    command.handled = true;
                 }
             }
             std::stringstream stn;
@@ -117,6 +120,9 @@ namespace tools {
             } else {
                 if(find_parse(name)){
                     process(name, var, command.size);
+                    command.handled = true;
+                } else if (find_switch(name)) {
+                    *var = !(*var);
                     command.handled = true;
                 }
             }
