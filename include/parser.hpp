@@ -157,7 +157,7 @@ namespace tools {
         }
 
         /// 1: good, 0: warning, -1: error
-        int showMsg(){
+        int showMsg(bool verbose=true){
             int maxLengh = 0;
             for(auto& name:vOrder){
                 if(name.size()>(size_t)maxLengh) maxLengh = name.size();
@@ -174,6 +174,7 @@ namespace tools {
             }
             if(hasNotHandled()) return -1;
             if(hasNotRegistered())return 0;
+            if(verbose)
             {
                 for (auto& name : vOrder) {
                     auto& command = vRegisterd[name];
