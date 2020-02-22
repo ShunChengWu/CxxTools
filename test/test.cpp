@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <numeric>
 #include "../include/PathTool.hpp"
 #include "../include/parser.hpp"
 int my_argc;
@@ -99,6 +100,49 @@ TEST(DataWorker, worker){
     printf("\n");
     size_t iter_max = 1e3;
     SceneNetRGBD_Loader sceneNetRgbdLoader(iter_max);
+    tools::DataWorker<int> dataWorker(&sceneNetRgbdLoader, 8);
+
+    size_t iter=0;
+    while(true){
+        auto data = dataWorker.get();
+        if(data){
+//            printf("iter, data: %zu %d\n", iter, *data);
+            EXPECT_EQ(iter++, *data);
+        } else break;
+    }
+}
+
+class SceneNetRGBD_Loader_iter : public tools::DataLoader<int> {
+public:
+    explicit SceneNetRGBD_Loader_iter(size_t max){
+        data.resize(max);
+        std::iota(data.begin(),data.end(),0);
+        iter = data.begin();
+        iter_max = data.end();
+    }
+
+    std::shared_ptr<int> get_item() override{
+        if(iter == iter_max) return nullptr;
+        std::shared_ptr<int> item(new int(*iter));
+        return item;
+    }
+
+    size_t dataSize() override {
+        return data.size();
+    }
+
+    bool next() override {
+        return (iter++ != data.end());
+    }
+private:
+    std::vector<int> data;
+    std::vector<int>::iterator iter_max, iter;
+};
+
+TEST(DataWorker, worker_iter){
+    printf("\n");
+    size_t iter_max = 1e3;
+    SceneNetRGBD_Loader_iter sceneNetRgbdLoader(iter_max);
     tools::DataWorker<int> dataWorker(&sceneNetRgbdLoader, 8);
 
     size_t iter=0;
