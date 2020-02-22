@@ -72,6 +72,45 @@ TEST(Parser, SWITCH) {
 //    size_t t = tools::PathTool::get_files_in_folder(path).size();
 //}
 
+#include "../include/DataWorker.h"
+class SceneNetRGBD_Loader : public tools::DataLoader<int> {
+public:
+    explicit SceneNetRGBD_Loader(size_t max):iter_max(max), iter(0){}
+
+    std::shared_ptr<int> get_item() override{
+//        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        if(iter >= iter_max) return nullptr;
+        std::shared_ptr<int> item(new int(iter));
+        return item;
+    }
+
+    size_t dataSize() override {
+        return iter_max;
+    }
+
+    bool next() override {
+        return (iter++ < iter_max);
+    }
+private:
+    size_t iter_max, iter;
+};
+
+TEST(DataWorker, worker){
+    printf("\n");
+    size_t iter_max = 1e3;
+    SceneNetRGBD_Loader sceneNetRgbdLoader(iter_max);
+    tools::DataWorker<int> dataWorker(&sceneNetRgbdLoader, 8);
+
+    size_t iter=0;
+    while(true){
+        auto data = dataWorker.get();
+        if(data){
+//            printf("iter, data: %zu %d\n", iter, *data);
+            EXPECT_EQ(iter++, *data);
+        } else break;
+    }
+}
+
 int main(int argc, char ** argv){
     testing::InitGoogleTest(&argc,argv);
     my_argc = argc;

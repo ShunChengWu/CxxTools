@@ -46,7 +46,8 @@ namespace tools {
                 if (terminate_) break;
 
                 std::unique_lock<std::mutex> lock_buffer(mutex_buffer_);
-                buffer_.push(loader_->get_item());
+                auto tmp = loader_->get_item();
+                buffer_.push(tmp);
                 terminate_ = !loader_->next();
                 //printf("size++[%zu]\n", buffer_.size());
                 lock_buffer.unlock();
@@ -54,7 +55,7 @@ namespace tools {
                 //printf("[thread] notify main.\n");
                 condition_get_.notify_one();
 
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+//                std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
         }
 
@@ -66,20 +67,28 @@ namespace tools {
                     condition_get_.wait(lock_get);
                     //std::this_thread::sleep_for(std::chrono::milliseconds(10));
                 }
-                if (terminate_) return nullptr;
+                if (!terminate_) {
+                    std::unique_lock<std::mutex> lock_buffer(mutex_buffer_);
+                    auto buffer = buffer_.front();
+                    buffer_.pop();
+                    //printf("size--[%zu]\n", buffer_.size());
+                    lock_buffer.unlock();
+//                std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-                std::unique_lock<std::mutex> lock_buffer(mutex_buffer_);
+                    if (buffer_.size() < buffer_size_) {
+                        //printf("[main] notify thread.\n");
+                        //std::unique_lock<std::mutex> lock_process(mutex_process_);
+                        condition_process_.notify_one();
+                    }
+                    return buffer;
+                } else if(!buffer_.empty()){
+                    auto buffer = buffer_.front();
+                    buffer_.pop();
+                    return buffer;
+                }
+            } else if(!buffer_.empty()){
                 auto buffer = buffer_.front();
                 buffer_.pop();
-                //printf("size--[%zu]\n", buffer_.size());
-                lock_buffer.unlock();
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
-                if (buffer_.size() < buffer_size_) {
-                    //printf("[main] notify thread.\n");
-                    //std::unique_lock<std::mutex> lock_process(mutex_process_);
-                    condition_process_.notify_one();
-                }
                 return buffer;
             }
             return nullptr;
