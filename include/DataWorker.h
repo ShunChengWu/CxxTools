@@ -45,15 +45,12 @@ namespace tools {
                 }
                 if (terminate_) break;
 
-                std::unique_lock<std::mutex> lock_buffer(mutex_buffer_);
                 auto tmp = loader_->get_item();
+                std::unique_lock<std::mutex> lock_buffer(mutex_buffer_);
                 buffer_.push(tmp);
                 terminate_ = !loader_->next();
-                //printf("size++[%zu]\n", buffer_.size());
-                lock_buffer.unlock();
-
-                //printf("[thread] notify main.\n");
                 condition_get_.notify_one();
+                lock_buffer.unlock();
 
 //                std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
