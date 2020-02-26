@@ -5,6 +5,13 @@ project(cxxTools CXX)
 INCLUDE(${PROJECT_SOURCE_DIR}/cmake/cmake_macro_install_uninstall/macro.cmake)
 
 OPTION(BUILD_TEST "Build test" OFF)
+#OPTION(BUILD_STATIC "Build static library?" OFF)
+#SET(LIBRARY_TYPE)
+#IF(BUILD_STATIC)
+#	SET(LIBRARY_TYPE STATIC)
+#ELSE()
+#	SET(LIBRARY_TYPE SHARED)
+#ENDIF()
 
 # If on Mac OS X:
 IF(${CMAKE_SYSTEM} MATCHES "Darwin")
@@ -56,10 +63,11 @@ endif(OpenCV_LIBS)
 SET(targetname CxxTools)
 setVersion(${targetname}_VERSION 0 0 1)
 
-add_library(${targetname} ${headers} ${sources})
+add_library(${targetname} ${LIBRARY_TYPE} ${headers} ${sources})
 target_include_directories(${targetname} PRIVATE include ${EIGEN3_INCLUDE_DIR})
 set_target_properties(${targetname} PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(${targetname} PROPERTIES CXX_STANDARD 11)
+set_property(TARGET ${targetname} PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 INCLUDE(${PROJECT_SOURCE_DIR}/cmake/SetEasyInstall.cmake)
 
