@@ -67,7 +67,7 @@ add_library(${targetname} ${LIBRARY_TYPE} ${headers} ${sources})
 target_include_directories(${targetname} PRIVATE include ${EIGEN3_INCLUDE_DIR})
 set_target_properties(${targetname} PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(${targetname} PROPERTIES CXX_STANDARD 11)
-set_property(TARGET ${targetname} PROPERTY POSITION_INDEPENDENT_CODE ON)
+#set_property(TARGET ${targetname} PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 INCLUDE(${PROJECT_SOURCE_DIR}/cmake/SetEasyInstall.cmake)
 
