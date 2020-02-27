@@ -48,10 +48,9 @@ namespace tools {
                 auto tmp = loader_->get_item();
                 std::unique_lock<std::mutex> lock_buffer(mutex_buffer_);
                 buffer_.push(tmp);
-                terminate_ = !loader_->next();
                 condition_get_.notify_one();
                 lock_buffer.unlock();
-
+                if(!loader_->next()) break;
 //                std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
         }
