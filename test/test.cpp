@@ -113,23 +113,20 @@ TEST(Parser, SWITCH) {
 //    }
 //}
 
+
 class SceneNetRGBD_Loader_iter : public tools::DataLoader<int> {
 public:
     explicit SceneNetRGBD_Loader_iter(size_t max):counter(0){
-        data.resize(max);
-        std::iota(data.begin(),data.end(),0);
-//        iter = data.begin();
-//        iter_max = data.end();
+        for(size_t i=0;i<max;++i)
+            data[i]=i;
         size = data.size();
-        printf("size: %zu\n", data.size());
-        printf("iter+size+1 > iter_end: %d\n", data.begin()+data.size()+1 > data.end());
-//        printf("iter_diff: %ld\n", iter_max-iter);
     }
 
     std::shared_ptr<int> get_item(int idx) override{
-        auto iter = data.begin()+idx;
-        if(iter >= data.end()) return nullptr;
-        std::shared_ptr<int> item(new int( *iter ));
+        auto iter = data.begin();
+        std::advance(iter,idx);
+        if(iter == data.end()) return nullptr;
+        std::shared_ptr<int> item(new int( iter->second ));
         return item;
     }
 
@@ -138,8 +135,8 @@ public:
     }
 
     int next() override {
-        auto iter = data.begin()+counter;
-        if(iter < data.end())
+        auto iter = data.begin();
+        if(std::next(iter) != data.end())
             return counter++;
         else
             return -1;
@@ -153,7 +150,7 @@ public:
 private:
     size_t counter;
     size_t size;
-    std::vector<int> data;
+    std::map<int,int> data;
 //    std::vector<int>::iterator iter_max, iter;
 };
 
