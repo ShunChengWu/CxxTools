@@ -74,56 +74,62 @@ TEST(Parser, SWITCH) {
 //}
 
 #include "../include/DataWorker.h"
-class SceneNetRGBD_Loader : public tools::DataLoader<int> {
-public:
-    explicit SceneNetRGBD_Loader(size_t max):iter_max(max), iter(0){}
-
-    std::shared_ptr<int> get_item() override{
-//        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        if(iter >= iter_max) return nullptr;
-        std::shared_ptr<int> item(new int(iter));
-        return item;
-    }
-
-    size_t dataSize() override {
-        return iter_max;
-    }
-
-    bool next() override {
-        return (iter++ < iter_max);
-    }
-private:
-    size_t iter_max, iter;
-};
-
-TEST(DataWorker, worker){
-    printf("\n");
-    size_t iter_max = 1e3;
-    SceneNetRGBD_Loader sceneNetRgbdLoader(iter_max);
-    tools::DataWorker<int> dataWorker(&sceneNetRgbdLoader, 8);
-
-    size_t iter=0;
-    while(true){
-        auto data = dataWorker.get();
-        if(data){
-//            printf("iter, data: %zu %d\n", iter, *data);
-            EXPECT_EQ(iter++, *data);
-        } else break;
-    }
-}
+//class SceneNetRGBD_Loader : public tools::DataLoader<int> {
+//public:
+//    explicit SceneNetRGBD_Loader(size_t max):iter_max(max), iter(0){}
+//
+//    std::shared_ptr<int> get_item() override{
+////        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+//        if(iter >= iter_max) return nullptr;
+//        std::shared_ptr<int> item(new int(iter));
+//        return item;
+//    }
+//
+//    size_t dataSize() override {
+//        return iter_max;
+//    }
+//
+//    int next() override {
+//        return (iter++ < iter_max);
+//    }
+////    bool checkNext() override{return true;}
+//private:
+//    size_t iter_max, iter;
+//};
+//
+//TEST(DataWorker, worker){
+//    printf("\n");
+//    size_t iter_max = 1e3;
+//    SceneNetRGBD_Loader sceneNetRgbdLoader(iter_max);
+//    tools::DataWorker<int> dataWorker(&sceneNetRgbdLoader, 8);
+//
+//    size_t iter=0;
+//    while(true){
+//        auto data = dataWorker.get();
+//        if(data){
+////            printf("iter, data: %zu %d\n", iter, *data);
+//            EXPECT_EQ(iter++, *data);
+//        } else break;
+//    }
+//}
 
 class SceneNetRGBD_Loader_iter : public tools::DataLoader<int> {
 public:
-    explicit SceneNetRGBD_Loader_iter(size_t max){
+    explicit SceneNetRGBD_Loader_iter(size_t max):counter(0){
         data.resize(max);
         std::iota(data.begin(),data.end(),0);
-        iter = data.begin();
-        iter_max = data.end();
+//        iter = data.begin();
+//        iter_max = data.end();
+        size = data.size();
+        printf("size: %zu\n", data.size());
+        printf("iter+size+1 > iter_end: %d\n", data.begin()+data.size()+1 > data.end());
+//        printf("iter_diff: %ld\n", iter_max-iter);
     }
 
-    std::shared_ptr<int> get_item() override{
-        if(iter == iter_max) return nullptr;
-        std::shared_ptr<int> item(new int(*iter));
+    std::shared_ptr<int> get_item(int idx) override{
+        auto iter = data.begin()+idx;
+        if(iter >= data.end()) return nullptr;
+        std::shared_ptr<int> item(new int( *iter ));
         return item;
     }
 
@@ -131,12 +137,24 @@ public:
         return data.size();
     }
 
-    bool next() override {
-        return (iter++ != data.end());
+    int next() override {
+        auto iter = data.begin()+counter;
+        if(iter < data.end())
+            return counter++;
+        else
+            return -1;
     }
+//    bool checkNext() override{
+//        bool state;
+//        state = (iter++ != data.end());
+//        iter+=5;
+//        return state;
+//    }
 private:
+    size_t counter;
+    size_t size;
     std::vector<int> data;
-    std::vector<int>::iterator iter_max, iter;
+//    std::vector<int>::iterator iter_max, iter;
 };
 
 TEST(DataWorker, worker_iter){
@@ -149,7 +167,7 @@ TEST(DataWorker, worker_iter){
     while(true){
         auto data = dataWorker.get();
         if(data){
-//            printf("iter, data: %zu %d\n", iter, *data);
+            printf("iter, data: %zu %d\n", iter, *data);
             EXPECT_EQ(iter++, *data);
         } else break;
     }
