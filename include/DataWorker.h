@@ -105,37 +105,46 @@ namespace tools {
                 }
                 condition_get_.notify_one();
             }
+            hasMore_=false;
+            condition_get_.notify_one();
         }
 
         std::shared_ptr<OutType> get() {
-            std::unique_lock<std::mutex> lock_get(mutex_get_);
-            if(buffer_.empty() && !terminate_ && hasMore_) {
-                waitData_=true;
-                condition_get_.wait(lock_get, [&]{return !waitData_;});
-            }
-
-            if(terminate_ || buffer_.empty()) return nullptr;
-
-            std::unique_lock<std::mutex> lock_buffer(mutex_buffer_);
-            auto buffer = buffer_.front();
-            buffer_.pop();
-            lock_buffer.unlock();
-
-
-            if (buffer_.size() < buffer_size_ && hasMore_) {
-                if(pool_) {
-                    auto idx = loader_->next();
-                    if (idx >= 0) pool_->runTaskWithID(std::bind(&DataWorker<OutType>::kernel, this, idx));
-                    else hasMore_ = false;
-                } else {
-                    {
-                        std::unique_lock<std::mutex> lock_process(mutex_process_);
-                        needMore_=true;
-                    }
-                    condition_process_.notify_one();
+//            if (thread_.valid()) {
+                std::unique_lock<std::mutex> lock_get(mutex_get_);
+                if (buffer_.empty() && !terminate_ && hasMore_) {
+                    waitData_ = true;
+                    condition_get_.wait(lock_get, [&] { return !waitData_; });
                 }
-            }
-            return buffer;
+
+                if (terminate_ || buffer_.empty()) return nullptr;
+
+                std::unique_lock<std::mutex> lock_buffer(mutex_buffer_);
+                auto buffer = buffer_.front();
+                buffer_.pop();
+                lock_buffer.unlock();
+
+
+                if (buffer_.size() < buffer_size_ && hasMore_) {
+                    if (pool_) {
+                        auto idx = loader_->next();
+                        if (idx >= 0) pool_->runTaskWithID(std::bind(&DataWorker<OutType>::kernel, this, idx));
+                        else hasMore_ = false;
+                    } else {
+                        {
+                            std::unique_lock<std::mutex> lock_process(mutex_process_);
+                            needMore_ = true;
+                        }
+                        condition_process_.notify_one();
+                    }
+                }
+                return buffer;
+//            } else if(!buffer_.empty()){
+//                auto buffer = buffer_.front();
+//                buffer_.pop();
+//                return buffer;
+//            }
+
         }
 
     private:
