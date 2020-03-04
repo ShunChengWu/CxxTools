@@ -123,6 +123,7 @@ public:
     }
 
     std::shared_ptr<int> get_item(int idx) override{
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         auto iter = data.begin();
         std::advance(iter,idx);
         if(iter == data.end()) return nullptr;
@@ -157,16 +158,19 @@ private:
 TEST(DataWorker, worker_iter){
     printf("\n");
     size_t iter_max = 1e3;
+    size_t max_iter=1;
     SceneNetRGBD_Loader_iter sceneNetRgbdLoader(iter_max);
-    tools::DataWorker<int> dataWorker(&sceneNetRgbdLoader, 8, true);
-
+    tools::DataWorker<int> dataWorker(&sceneNetRgbdLoader, 8, false);
     size_t iter=0;
+
     while(true){
+//        std::this_thread::sleep_for(std::chrono::milliseconds(5));
         auto data = dataWorker.get();
         if(data){
             printf("iter, data: %zu %d\n", iter, *data);
             EXPECT_EQ(iter++, *data);
         } else break;
+        if(iter>max_iter)break;
     }
 }
 

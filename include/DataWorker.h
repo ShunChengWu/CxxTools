@@ -39,6 +39,8 @@ namespace tools {
 
         ~DataWorker() {
             Stop();
+            needMore_=true;
+            waitData_=false;
             condition_get_.notify_all();
             condition_process_.notify_all();
             condition_buffer_.notify_all();
