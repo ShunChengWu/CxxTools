@@ -20,17 +20,21 @@ namespace tools {
     template<class OutType>
     class DataWorker {
     public:
-        explicit DataWorker(DataLoader<OutType> *loader, size_t buffer_size) :
-                pool(buffer_size),hasMore_(true), working(0),needMore_(true), waitData_(true), loader_(loader), buffer_size_(buffer_size), terminate_(false) {
-//            thread_ = std::async(std::launch::async, std::bind(&DataWorker<OutType>::process, this));
-//            pool.runTaskWithID(std::bind(&DataWorker<OutType>::process, this));
-            for(size_t i=0;i<buffer_size;++i) {
-                auto idx = loader_->next();
-                if(idx>=0)
-                    pool.runTaskWithID(std::bind(&DataWorker<OutType>::kernel, this, idx));
-                else
-                    hasMore_=false;
+        explicit DataWorker(DataLoader<OutType> *loader, size_t buffer_size, bool pool) :
+                hasMore_(true), working(0), needMore_(true), waitData_(true), loader_(loader), buffer_size_(buffer_size), terminate_(false) {
+            if (!pool) {
+                thread_ = std::async(std::launch::async, std::bind(&DataWorker<OutType>::process, this));
+            } else {
+                pool_.reset(new tools::TaskThreadPool(buffer_size));
+                for (size_t i = 0; i < buffer_size; ++i) {
+                    auto idx = loader_->next();
+                    if (idx >= 0)
+                        pool_->runTaskWithID(std::bind(&DataWorker<OutType>::kernel, this, idx));
+                    else
+                        hasMore_ = false;
+                }
             }
+
         }
 
         ~DataWorker() {
@@ -38,8 +42,9 @@ namespace tools {
             condition_get_.notify_all();
             condition_process_.notify_all();
             condition_buffer_.notify_all();
-//            while (!thread_.valid()) {
-//            }
+            if(!pool_)
+            while (!thread_.valid()) {
+            }
         }
 
         void Stop() {
@@ -68,6 +73,7 @@ namespace tools {
                     needMore_=false;
                     condition_process_.wait(lock_process, [&] { return needMore_; });
                 }
+                mutex_process_.unlock();
 //                while (buffer_.size() >= buffer_size_ && !terminate_) {
 //                }
                 if (terminate_) {
@@ -103,7 +109,7 @@ namespace tools {
             std::unique_lock<std::mutex> lock_get(mutex_get_);
             if(buffer_.empty() && !terminate_ && hasMore_) {
                 waitData_=true;
-                condition_get_.wait(lock_get, [&]{return waitData_;});
+                condition_get_.wait(lock_get, [&]{return !waitData_;});
             }
 
             if(terminate_ || buffer_.empty()) return nullptr;
@@ -115,20 +121,23 @@ namespace tools {
 
 
             if (buffer_.size() < buffer_size_ && hasMore_) {
-                auto idx = loader_->next();
-                if(idx>=0) pool.runTaskWithID(std::bind(&DataWorker<OutType>::kernel, this, idx));
-                else hasMore_=false;
-//                {
-//                    std::unique_lock<std::mutex> lock_process(mutex_process_);
-//                    needMore_=true;
-//                }
-//                condition_process_.notify_one();
+                if(pool_) {
+                    auto idx = loader_->next();
+                    if (idx >= 0) pool_->runTaskWithID(std::bind(&DataWorker<OutType>::kernel, this, idx));
+                    else hasMore_ = false;
+                } else {
+                    {
+                        std::unique_lock<std::mutex> lock_process(mutex_process_);
+                        needMore_=true;
+                    }
+                    condition_process_.notify_one();
+                }
             }
             return buffer;
         }
 
     private:
-        tools::TaskThreadPool pool;
+        std::unique_ptr<tools::TaskThreadPool> pool_;
         std::atomic_int working;
         bool hasMore_;
         bool needMore_, waitData_;

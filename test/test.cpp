@@ -158,7 +158,7 @@ TEST(DataWorker, worker_iter){
     printf("\n");
     size_t iter_max = 1e3;
     SceneNetRGBD_Loader_iter sceneNetRgbdLoader(iter_max);
-    tools::DataWorker<int> dataWorker(&sceneNetRgbdLoader, 8);
+    tools::DataWorker<int> dataWorker(&sceneNetRgbdLoader, 8, true);
 
     size_t iter=0;
     while(true){
