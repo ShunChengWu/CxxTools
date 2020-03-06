@@ -111,7 +111,7 @@ namespace tools {
     class MultiDataWorker {
     public:
         typedef std::shared_ptr<OutType> DataPtr;
-        MultiDataWorker(DataLoader<OutType> *loader, size_t buffer_size, bool pool):loader_(loader),terminate_(false){
+        MultiDataWorker(DataLoader<OutType> *loader, size_t buffer_size):loader_(loader),terminate_(false){
             for(size_t i=0;i<buffer_size;++i) background();
         }
         ~MultiDataWorker(){

@@ -119,6 +119,26 @@ TEST(DataWorker, worker_iter){
     }
     EXPECT_EQ(iter, iter_max);
 }
+TEST(DataWorker, multi_worker_iter){
+    printf("\n");
+    size_t iter_max = 1e3;
+    size_t max_iter=10;
+    SceneNetRGBD_Loader_iter sceneNetRgbdLoader(iter_max);
+    tools::MultiDataWorker<int> dataWorker(&sceneNetRgbdLoader, 8);
+    size_t iter=0;
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    while(true){
+//        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        auto data = dataWorker.get();
+        if(data){
+//            printf("iter, data: %zu %d\n", iter, *data);
+            EXPECT_EQ(iter++, *data);
+//            if(iter==max_iter)break;
+        } else break;
+
+    }
+    EXPECT_EQ(iter, iter_max);
+}
 int main(int argc, char ** argv){
     testing::InitGoogleTest(&argc,argv);
     my_argc = argc;
