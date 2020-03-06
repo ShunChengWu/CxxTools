@@ -2,6 +2,7 @@
 #include <future>
 #include <queue>
 #include <mutex>
+#include <functional>
 namespace tools {
     template<class OutType>
     class DataLoader {
