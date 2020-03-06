@@ -15,12 +15,11 @@ namespace tools {
     template<class OutType>
     class DataWorker {
     public:
-        explicit DataWorker(DataLoader<OutType> *loader, size_t buffer_size, bool pool) :
+        explicit DataWorker(DataLoader<OutType> *loader, size_t buffer_size) :
                 hasMore_(true), working(0), needMore_(true), waitData_(true), loader_(loader), buffer_size_(buffer_size), terminate_(false) {
             thread_ = std::async(std::launch::async, std::bind(&DataWorker<OutType>::process, this));
 
         }
-
         ~DataWorker() {
             Stop();
             needMore_=true;
@@ -34,22 +33,6 @@ namespace tools {
         void Stop() {
             terminate_ = true;
         }
-
-        void kernel(int idx){
-            working++;
-            auto tmp = loader_->get_item(idx);
-            {
-                std::unique_lock<std::mutex> lock_buffer(mutex_buffer_);
-                buffer_.push(tmp);
-            }
-            {
-                std::unique_lock<std::mutex> lock_get(mutex_get_);
-                waitData_=false;
-            }
-            working--;
-            condition_get_.notify_one();
-        }
-
         void process() {
             while(true) {
                 std::unique_lock<std::mutex> lock_process(mutex_process_);
@@ -58,8 +41,6 @@ namespace tools {
                     condition_process_.wait(lock_process, [&] { return needMore_; });
                 }
                 mutex_process_.unlock();
-//                while (buffer_.size() >= buffer_size_ && !terminate_) {
-//                }
                 if (terminate_) {
                     condition_get_.notify_one();
                     break;
@@ -79,13 +60,9 @@ namespace tools {
                 {
                     std::unique_lock<std::mutex> lock_buffer(mutex_buffer_);
                     buffer_.push(tmp);
-                }
-
-                {
-                    std::unique_lock<std::mutex> lock_get(mutex_get_);
                     waitData_=false;
+                    condition_get_.notify_one();
                 }
-                condition_get_.notify_one();
             }
             hasMore_=false;
             condition_get_.notify_one();
