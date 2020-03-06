@@ -1,13 +1,8 @@
 #pragma  once
-#include <thread>
 #include <future>
 #include <queue>
 #include <mutex>
-#include <functional>
-#include "thread_pool.hpp"
 namespace tools {
-
-
     template<class OutType>
     class DataLoader {
     public:
@@ -22,18 +17,7 @@ namespace tools {
     public:
         explicit DataWorker(DataLoader<OutType> *loader, size_t buffer_size, bool pool) :
                 hasMore_(true), working(0), needMore_(true), waitData_(true), loader_(loader), buffer_size_(buffer_size), terminate_(false) {
-            if (!pool) {
-                thread_ = std::async(std::launch::async, std::bind(&DataWorker<OutType>::process, this));
-            } else {
-                pool_.reset(new tools::TaskThreadPool(buffer_size));
-                for (size_t i = 0; i < buffer_size; ++i) {
-                    auto idx = loader_->next();
-                    if (idx >= 0)
-                        pool_->runTaskWithID(std::bind(&DataWorker<OutType>::kernel, this, idx));
-                    else
-                        hasMore_ = false;
-                }
-            }
+            thread_ = std::async(std::launch::async, std::bind(&DataWorker<OutType>::process, this));
 
         }
 
@@ -44,9 +28,7 @@ namespace tools {
             condition_get_.notify_all();
             condition_process_.notify_all();
             condition_buffer_.notify_all();
-            if(!pool_)
-            while (!thread_.valid()) {
-            }
+            while (!thread_.valid());
         }
 
         void Stop() {
@@ -111,44 +93,31 @@ namespace tools {
 
         std::shared_ptr<OutType> get() {
 //            if (thread_.valid()) {
-                std::unique_lock<std::mutex> lock_get(mutex_get_);
-                if (buffer_.empty() && !terminate_ && hasMore_) {
-                    waitData_ = true;
-                    condition_get_.wait(lock_get, [&] { return !waitData_; });
+            std::unique_lock<std::mutex> lock_get(mutex_get_);
+            if (buffer_.empty() && !terminate_ && hasMore_) {
+                waitData_ = true;
+                condition_get_.wait(lock_get, [&] { return !waitData_; });
+            }
+
+            if (terminate_ || buffer_.empty()) return nullptr;
+
+            std::unique_lock<std::mutex> lock_buffer(mutex_buffer_);
+            auto buffer = buffer_.front();
+            buffer_.pop();
+            lock_buffer.unlock();
+
+
+            if (buffer_.size() < buffer_size_ && hasMore_) {
+                {
+                    std::unique_lock<std::mutex> lock_process(mutex_process_);
+                    needMore_ = true;
                 }
-
-                if (terminate_ || buffer_.empty()) return nullptr;
-
-                std::unique_lock<std::mutex> lock_buffer(mutex_buffer_);
-                auto buffer = buffer_.front();
-                buffer_.pop();
-                lock_buffer.unlock();
-
-
-                if (buffer_.size() < buffer_size_ && hasMore_) {
-                    if (pool_) {
-                        auto idx = loader_->next();
-                        if (idx >= 0) pool_->runTaskWithID(std::bind(&DataWorker<OutType>::kernel, this, idx));
-                        else hasMore_ = false;
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> lock_process(mutex_process_);
-                            needMore_ = true;
-                        }
-                        condition_process_.notify_one();
-                    }
-                }
-                return buffer;
-//            } else if(!buffer_.empty()){
-//                auto buffer = buffer_.front();
-//                buffer_.pop();
-//                return buffer;
-//            }
-
+                condition_process_.notify_one();
+            }
+            return buffer;
         }
 
     private:
-        std::unique_ptr<tools::TaskThreadPool> pool_;
         std::atomic_int working;
         bool hasMore_;
         bool needMore_, waitData_;
@@ -161,4 +130,56 @@ namespace tools {
         std::mutex mutex_get_, mutex_process_, mutex_buffer_, mutex_geIdx_;
     };
 
+    template<class OutType>
+    class MultiDataWorker {
+    public:
+        typedef std::shared_ptr<OutType> DataPtr;
+        MultiDataWorker(DataLoader<OutType> *loader, size_t buffer_size, bool pool):loader_(loader),terminate_(false){
+            for(size_t i=0;i<buffer_size;++i) background();
+        }
+        ~MultiDataWorker(){
+            while(!queue_.empty()){
+                queue_.front()->get();
+                queue_.pop();
+            }
+        }
+        std::shared_ptr<OutType> get(){
+            {
+                std::unique_lock<std::mutex> lock(mutex_queue);
+                if (terminate_ || queue_.empty()) {
+                    return nullptr;
+                }
+            }
+
+            std::shared_ptr<std::future<DataPtr>> data = nullptr;
+            {
+                std::unique_lock<std::mutex> lock(mutex_queue);
+                data = queue_.front();
+                queue_.pop();
+            }
+            background();
+            return data->get();
+        }
+
+        void background() {
+            int idx;
+            {
+                std::unique_lock<std::mutex> lock(mutex_data_);
+                idx = loader_->next();
+            }
+            if(idx<0)return;
+            {
+                std::unique_lock<std::mutex> lock(mutex_queue);
+                std::shared_ptr<std::future<DataPtr>> worker(new std::future<DataPtr>);
+                *worker = std::async(&DataLoader<OutType>::get_item, loader_, idx);
+                queue_.push(worker);
+            }
+        }
+    private:
+        DataLoader<OutType> *loader_;
+        std::atomic_bool terminate_;
+        std::mutex mutex_queue, mutex_data_;
+        std::queue<std::shared_ptr<std::future< DataPtr >>> queue_;
+
+    };
 }

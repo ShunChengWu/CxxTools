@@ -68,52 +68,7 @@ TEST(Parser, SWITCH) {
 
 }
 
-//TEST(IO, get_files){
-//std::string path = "/media/sc/SSD1TB/TrainingData/SceneNet/train";
-//    size_t t = tools::PathTool::get_files_in_folder(path).size();
-//}
-
 #include "../include/DataWorker.h"
-//class SceneNetRGBD_Loader : public tools::DataLoader<int> {
-//public:
-//    explicit SceneNetRGBD_Loader(size_t max):iter_max(max), iter(0){}
-//
-//    std::shared_ptr<int> get_item() override{
-////        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-//        if(iter >= iter_max) return nullptr;
-//        std::shared_ptr<int> item(new int(iter));
-//        return item;
-//    }
-//
-//    size_t dataSize() override {
-//        return iter_max;
-//    }
-//
-//    int next() override {
-//        return (iter++ < iter_max);
-//    }
-////    bool checkNext() override{return true;}
-//private:
-//    size_t iter_max, iter;
-//};
-//
-//TEST(DataWorker, worker){
-//    printf("\n");
-//    size_t iter_max = 1e3;
-//    SceneNetRGBD_Loader sceneNetRgbdLoader(iter_max);
-//    tools::DataWorker<int> dataWorker(&sceneNetRgbdLoader, 8);
-//
-//    size_t iter=0;
-//    while(true){
-//        auto data = dataWorker.get();
-//        if(data){
-////            printf("iter, data: %zu %d\n", iter, *data);
-//            EXPECT_EQ(iter++, *data);
-//        } else break;
-//    }
-//}
-
-
 class SceneNetRGBD_Loader_iter : public tools::DataLoader<int> {
 public:
     explicit SceneNetRGBD_Loader_iter(size_t max):counter(0){
@@ -123,7 +78,7 @@ public:
     }
 
     std::shared_ptr<int> get_item(int idx) override{
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+//        std::this_thread::sleep_for(std::chrono::milliseconds(10));
         auto iter = data.begin();
         std::advance(iter,idx);
         if(iter == data.end()) return nullptr;
@@ -136,44 +91,34 @@ public:
     }
 
     int next() override {
-        auto iter = data.begin();
-        if(std::next(iter) != data.end())
-            return counter++;
-        else
-            return -1;
+        return counter < data.size()? counter++ : -1;
     }
-//    bool checkNext() override{
-//        bool state;
-//        state = (iter++ != data.end());
-//        iter+=5;
-//        return state;
-//    }
 private:
-    size_t counter;
+    int counter;
     size_t size;
     std::map<int,int> data;
-//    std::vector<int>::iterator iter_max, iter;
 };
 
 TEST(DataWorker, worker_iter){
     printf("\n");
     size_t iter_max = 1e3;
-    size_t max_iter=1;
+    size_t max_iter=10;
     SceneNetRGBD_Loader_iter sceneNetRgbdLoader(iter_max);
-    tools::DataWorker<int> dataWorker(&sceneNetRgbdLoader, 8, false);
+    tools::DataWorker<int> dataWorker(&sceneNetRgbdLoader, 8);
     size_t iter=0;
-
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
     while(true){
 //        std::this_thread::sleep_for(std::chrono::milliseconds(5));
         auto data = dataWorker.get();
         if(data){
-            printf("iter, data: %zu %d\n", iter, *data);
+//            printf("iter, data: %zu %d\n", iter, *data);
             EXPECT_EQ(iter++, *data);
+//            if(iter==max_iter)break;
         } else break;
-        if(iter>max_iter)break;
-    }
-}
 
+    }
+    EXPECT_EQ(iter, iter_max);
+}
 int main(int argc, char ** argv){
     testing::InitGoogleTest(&argc,argv);
     my_argc = argc;
