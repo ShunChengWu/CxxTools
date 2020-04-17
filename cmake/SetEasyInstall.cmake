@@ -41,7 +41,7 @@ endif()
 SET(INSTALL_LIB_DIR lib CACHE PATH "Installation directory for libraries")
 SET(INSTALL_BIN_DIR bin CACHE PATH "Installation directory for executables")
 SET(INSTALL_INCLUDE_DIR include/${targetname} CACHE PATH "Installation directory for header files")
-SET(INSTALL_CMAKE_DIR cmake CACHE PATH "Installation directory for cmake files")
+SET(INSTALL_CMAKE_DIR CACHE PATH "Installation directory for cmake files")
 
 # Make relative paths absolute (needed later on)
 foreach(p LIB BIN INCLUDE CMAKE)

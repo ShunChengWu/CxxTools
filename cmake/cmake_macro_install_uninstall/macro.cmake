@@ -44,7 +44,7 @@ set(INSTALL_TARGETFILE_NAME ${TARGETNAME})
 
 # ... for the build tree
 set(CONF_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}" "${PROJECT_BINARY_DIR}")
-configure_file(${PROJECT_SOURCE_DIR}/cmake/cmake_macro_install_uninstall/InstallConfig.cmake.in 
+configure_file(${PROJECT_SOURCE_DIR}/cmake/cmake_macro_install_uninstall/InstallConfig.cmake.in
 	"${PROJECT_BINARY_DIR}/${NAME}Config.cmake" @ONLY)
 
 # ... for the install tree
