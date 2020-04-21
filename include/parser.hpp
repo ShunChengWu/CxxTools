@@ -353,7 +353,8 @@ namespace tools {
 
         template<class T>
         static bool changeSwitchValue(T* var){
-            *var = *var > 0? 0:1;
+            *var = true;
+            //*var = *var > 0? 0:1;
             return true;
         }
 
