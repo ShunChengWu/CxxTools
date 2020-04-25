@@ -328,10 +328,15 @@ namespace tools{
                 // get filename
                 auto lastDot = path.find_last_of('.');
                 auto lastRightSlash = path.find_last_of('/');
-                if(lastDot == std::string::npos)
-                    return std::string("");
-                if(lastRightSlash == std::string::npos)
+                if(lastRightSlash == std::string::npos && lastDot == std::string::npos) // input is a name (100)
+                    return path;
+                if(lastRightSlash == std::string::npos && lastDot != std::string::npos) // input is a name with type (100.cpp)
                     return path.substr(0, lastDot);
+                if(lastRightSlash != std::string::npos && lastDot == std::string::npos) // input is a path without type (something/100)
+                    return path.substr(lastRightSlash+1, path.length());
+                if(lastDot == path.front() && lastRightSlash == path.front()+1) // input is ./100.cpp
+                    return path.substr(lastRightSlash+1, path.length());
+
                 return path.substr(lastRightSlash+1, lastRightSlash-lastDot-1);
             };
             auto name1 = std::stoi(getFileName(struct1));

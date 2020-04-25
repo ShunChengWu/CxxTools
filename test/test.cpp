@@ -68,6 +68,7 @@ TEST(Parser, SWITCH) {
 
 }
 
+
 #include "../include/DataWorker.h"
 class SceneNetRGBD_Loader_iter : public tools::DataLoader<int> {
 public:
@@ -140,6 +141,7 @@ TEST(DataWorker, multi_worker_iter){
     EXPECT_EQ(iter, iter_max);
 }
 int main(int argc, char ** argv){
+    auto tmp = tools::PathTool::get_files_in_folder("/home/sc/Downloads/2020-04-25_13-46-19/images/depth", "",true,true);
     testing::InitGoogleTest(&argc,argv);
     my_argc = argc;
     my_argv = argv;
