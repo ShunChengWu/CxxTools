@@ -63,11 +63,17 @@ namespace tools {
         class Logger {
         private:
             Logger()
-                    : severity_level_(INFO), mbLogToFile(false) {}
+                    : severity_level_(INFO), mbLogToFile(false) {
+                char buffer[1024];
+                std::time_t tt = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+                std::tm *tm = localtime(&tt);
+                sprintf(buffer, "log_%04d-%02d-%02d_%02d-%02d-%02d.txt",
+                        tm->tm_year+1900, tm->tm_mon + 1, tm->tm_mday,
+                        tm->tm_hour, tm->tm_min, tm->tm_sec);
+                msLogName = buffer;
+            }
 
         public:
-            std::unique_ptr<std::fstream> f;
-
             /// Store all log data.
             /**
              * A record has the severity of logging, the position where the file and line
@@ -133,17 +139,6 @@ namespace tools {
              */
             void operator+=(const Record &record) {
                 std::lock_guard<std::mutex> guard(mutex_);
-                if(mbLogToFile && f == nullptr){
-                    char buffer[1024];
-                    std::time_t tt = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-                    std::tm *tm = localtime(&tt);
-                    sprintf(buffer, "log_%04d-%02d-%02d_%02d_%02d_%02d.txt",
-                            tm->tm_year, tm->tm_mon + 1, tm->tm_mday,
-                            tm->tm_hour, tm->tm_min, tm->tm_sec);
-                    f.reset(new std::fstream(buffer, std::ios::out));
-                }
-
-
                 ss.str("");
                 ss.clear();
                 // Print severity.
@@ -178,7 +173,12 @@ namespace tools {
                 ss << buffer;
 
                 if (CheckSeverity(record.severity)) {
-                    if(mbLogToFile) (*f) << ss.str();
+                    if(mbLogToFile) {
+                        if(f == nullptr) f.reset(new std::fstream(msLogName, std::ios::out));
+                        else f->open(msLogName, std::ios::out | std::ios::app);
+                        (*f) << ss.str();
+                        f->close();
+                    }
                     printf("%s", ss.str().c_str());
                 }
                 if (record.severity == Severity::ERROR) throw std::runtime_error(ss.str());
@@ -236,6 +236,10 @@ namespace tools {
             std::mutex mutex_;
 
             bool mbLogToFile;
+
+            std::unique_ptr<std::fstream> f;
+
+            std::string msLogName;
 
             Logger(const Logger &);
 

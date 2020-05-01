@@ -143,6 +143,7 @@ TEST(DataWorker, multi_worker_iter){
 
 #include "../include/log.h"
 TEST(LOG, loggging){
+    LOG_TO_FILE(1);
     LOG_ON(VERBOSE);
     LOG(INFO) << "1";
     LOG(WARNING) << "1";
