@@ -63,15 +63,7 @@ namespace tools {
         class Logger {
         private:
             Logger()
-                    : severity_level_(INFO) {
-                char buffer[1024];
-                std::time_t tt = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-                std::tm *tm = localtime(&tt);
-                sprintf(buffer, "log_%04d-%02d-%02d_%02d_%02d_%02d.txt",
-                        tm->tm_year, tm->tm_mon + 1, tm->tm_mday,
-                        tm->tm_hour, tm->tm_min, tm->tm_sec);
-                f.reset(new std::fstream(buffer, std::ios::out));
-            }
+                    : severity_level_(INFO), mbLogToFile(false) {}
 
         public:
             std::unique_ptr<std::fstream> f;
@@ -141,6 +133,17 @@ namespace tools {
              */
             void operator+=(const Record &record) {
                 std::lock_guard<std::mutex> guard(mutex_);
+                if(mbLogToFile && f == nullptr){
+                    char buffer[1024];
+                    std::time_t tt = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+                    std::tm *tm = localtime(&tt);
+                    sprintf(buffer, "log_%04d-%02d-%02d_%02d_%02d_%02d.txt",
+                            tm->tm_year, tm->tm_mon + 1, tm->tm_mday,
+                            tm->tm_hour, tm->tm_min, tm->tm_sec);
+                    f.reset(new std::fstream(buffer, std::ios::out));
+                }
+
+
                 ss.str("");
                 ss.clear();
                 // Print severity.
@@ -177,7 +180,7 @@ namespace tools {
                 if (record.severity == Severity::ERROR) throw std::runtime_error(ss.str());
 
                 if (CheckSeverity(record.severity)) {
-                    (*f) << ss.str();
+                    if(mbLogToFile) (*f) << ss.str();
                     printf("%s", ss.str().c_str());
                 }
                 fflush(stdout);
@@ -192,6 +195,10 @@ namespace tools {
 
             void set_severity_level(const Severity &severity_level) {
                 severity_level_ = severity_level;
+            }
+
+            void set_log_to_file(bool option){
+                mbLogToFile = option;
             }
 
             const Severity &severity_level() const {
@@ -229,6 +236,8 @@ namespace tools {
             // Mutex for thread safe.
             std::mutex mutex_;
 
+            bool mbLogToFile;
+
             Logger(const Logger &);
 
             void operator=(const Logger &);
@@ -263,5 +272,7 @@ namespace tools {
  */
 #define LOG_ON(severity) \
     tools::log::Logger::GetInstance()->set_severity_level(LOG_SEVERITY(severity))
+#define LOG_TO_FILE(option) \
+    tools::log::Logger::GetInstance()->set_log_to_file(option)
 
 #endif // BASE_LOG_H_

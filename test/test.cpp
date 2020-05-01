@@ -155,7 +155,6 @@ TEST(LOG, loggging){
     LOG(DEBUG) << "1";
 }
 int main(int argc, char ** argv){
-
     testing::InitGoogleTest(&argc,argv);
     my_argc = argc;
     my_argv = argv;
