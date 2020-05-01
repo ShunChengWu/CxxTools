@@ -1,5 +1,6 @@
 #pragma once
-
+#include <stdio.h>
+#include <string>
 
 namespace tools{
     void ProgessBar (double percentage, int type=0, bool flush=true){
