@@ -45,21 +45,6 @@ file(GLOB sources
 	"source/*.cpp"
 )
 
-if(OpenCV_LIBS)
-
-	file(GLOB HEADERS_CV
-	    "include/opencv/*.h"
-	    "include/opencv/*.hpp"
-	)
-	file(GLOB SOURCES_CV
-	    "source/opencv/*.cc"
-	    "source/opencv/*.cpp"
-	)
-
-	list(APPEND headers ${HEADERS_CV})
-	list(APPEND sources ${SOURCES_CV})
-endif(OpenCV_LIBS)
-
 SET(targetname CxxTools)
 setVersion(${targetname}_VERSION 0 0 1)
 
