@@ -177,12 +177,11 @@ namespace tools {
                 sprintf(buffer, "%s\n", record.message.str().c_str());
                 ss << buffer;
 
-                if (record.severity == Severity::ERROR) throw std::runtime_error(ss.str());
-
                 if (CheckSeverity(record.severity)) {
                     if(mbLogToFile) (*f) << ss.str();
                     printf("%s", ss.str().c_str());
                 }
+                if (record.severity == Severity::ERROR) throw std::runtime_error(ss.str());
                 fflush(stdout);
             }
 
