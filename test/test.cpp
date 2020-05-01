@@ -140,8 +140,22 @@ TEST(DataWorker, multi_worker_iter){
     }
     EXPECT_EQ(iter, iter_max);
 }
+
+#include "../include/log.h"
+TEST(LOG, loggging){
+    LOG_ON(VERBOSE);
+    LOG(INFO) << "1";
+    LOG(WARNING) << "1";
+    try {
+        LOG(ERROR) << "1";
+    } catch (std::runtime_error &err) {
+        std::cout << "catched! " << err.what();
+    }
+
+    LOG(DEBUG) << "1";
+}
 int main(int argc, char ** argv){
-    auto tmp = tools::PathTool::get_files_in_folder("/home/sc/Downloads/2020-04-25_13-46-19/images/depth", "",true,true);
+
     testing::InitGoogleTest(&argc,argv);
     my_argc = argc;
     my_argv = argv;
