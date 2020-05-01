@@ -3,3 +3,4 @@ bin
 lib
 cmake-build-*
 tmp
+.idea
