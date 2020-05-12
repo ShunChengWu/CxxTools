@@ -68,7 +68,7 @@ namespace tools {
                 char buffer[1024];
                 std::time_t tt = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
                 std::tm *tm = localtime(&tt);
-                sprintf(buffer, "log_%04d-%02d-%02d_%02d-%02d-%02d.txt",
+                sprintf(buffer, "log_%04d-%02d-%02d_%02d-%02d-%02d.log",
                         tm->tm_year+1900, tm->tm_mon + 1, tm->tm_mday,
                         tm->tm_hour, tm->tm_min, tm->tm_sec);
                 msLogName = buffer;
