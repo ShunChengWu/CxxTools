@@ -361,8 +361,9 @@ namespace tools{
             closedir (dir);
         } else {
             /* could not open directory */
-            perror ("");
-            EXIT_FAILURE;
+            std::stringstream ss;
+            ss << "Cannot open file at " << path << "\n";
+            throw std::runtime_error(ss.str());
         }
         if (sort) {
             bool allDigit = true;

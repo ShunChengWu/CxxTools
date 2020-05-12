@@ -46,7 +46,7 @@ file(GLOB sources
 )
 
 SET(targetname CxxTools)
-setVersion(${targetname}_VERSION 0 0 1)
+setVersion(${targetname}_VERSION 0 0 2)
 
 add_library(${targetname} ${LIBRARY_TYPE} ${headers} ${sources})
 target_include_directories(${targetname} PRIVATE include ${EIGEN3_INCLUDE_DIR})

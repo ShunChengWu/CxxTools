@@ -23,6 +23,7 @@
 #include <memory>
 #include <mutex>
 #include <fstream>
+#include <sstream>
 
 namespace tools {
     namespace log {
