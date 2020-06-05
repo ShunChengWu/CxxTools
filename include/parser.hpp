@@ -172,8 +172,8 @@ namespace tools {
                 }
                 return 1;
             }
-            if(hasNotHandled()) return -1;
-            if(hasNotRegistered())return 0;
+            if(hasNotHandled(verbose)) return -1;
+            if(hasNotRegistered(verbose))return 0;
             if(verbose)
             {
                 for (auto& name : vOrder) {
@@ -202,7 +202,7 @@ namespace tools {
 
         bool hasHelp(){return hasHelp_;}
     private:
-        bool hasNotHandled(){
+        bool hasNotHandled(bool verbose){
             std::vector<std::string> vNotHandled;
             for (auto& pair : vRegisterd) {
                 if(pair.second.required && !pair.second.handled){
@@ -210,15 +210,17 @@ namespace tools {
                 }
             }
             if(!vNotHandled.empty()){
-                printf("[Error] The following argument(s) should be given. Pass --h for help\n");
-                for(auto& noth : vNotHandled){
-                    printf("\t\t %s \"%s\"\n", noth.c_str(), vRegisterd[noth].explination.c_str());
+                if(verbose) {
+                    printf("[Error] The following argument(s) should be given. Pass --h for help\n");
+                    for (auto &noth : vNotHandled) {
+                        printf("\t\t %s \"%s\"\n", noth.c_str(), vRegisterd[noth].explination.c_str());
+                    }
                 }
                 return true;
             }
             return false;
         }
-        bool hasNotRegistered(){
+        bool hasNotRegistered(bool verbose){
             std::vector<std::string> vNotRegistered;
             for (auto& arg : argvs) {
                 if(vRegisterd.count(arg.first) == 0){
@@ -226,9 +228,11 @@ namespace tools {
                 }
             }
             if(!vNotRegistered.empty()){
-                printf("[Warning] Unknown argument(s) given. Please check the input arguments.\n");
-                for(auto& noth : vNotRegistered){
-                    printf("\t\t %s\n", noth.c_str());
+                if(verbose) {
+                    printf("[Warning] Unknown argument(s) given. Please check the input arguments.\n");
+                    for (auto &noth : vNotRegistered) {
+                        printf("\t\t %s\n", noth.c_str());
+                    }
                 }
                 return true;
             }
