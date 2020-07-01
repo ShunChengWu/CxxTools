@@ -63,8 +63,10 @@ namespace tools {
         };
         std::map<std::string, Command> vRegisterd; // name : helper message
         std::vector<std::string> vOrder;
+        std::string msHelpmsg;
     public:
         Parser(int argc, char** argv){
+            msHelpmsg="";
             hasHelp_ = false;
             std::string current_parse;
             for (int i=1; i< argc; ++i) {
@@ -79,6 +81,9 @@ namespace tools {
                 }
             }
         };
+        void SetHelpMsg(const std::string &msg){
+            msHelpmsg =msg;
+        }
 
         template <typename T>
         void addOption(std::pair<std::string, T*> pkg, std::string explaination = "", bool Required = false){
@@ -163,6 +168,9 @@ namespace tools {
                 if(name.size()>(size_t)maxLengh) maxLengh = name.size();
             }
             if(find_switch("h") || find_switch("help")){
+                if(!msHelpmsg.empty()) {
+                    printf("%s\n",msHelpmsg.c_str());
+                }
                 for (auto& name : vOrder) {
                     auto& command = vRegisterd[name];
                     if(command.required)
