@@ -530,7 +530,14 @@ namespace tools{
     }
 
     bool PathTool::isNumber(const std::string &s){
-        return !s.empty() && std::find_if(s.begin(),
-                                          s.end(), [](char c) { return !std::isdigit(c); }) == s.end();
+        // if contains '.'
+        if(s.empty())return false;
+        if(s.find('.') != std::string::npos) {
+            if(s.find('.') != s.find_last_of('.')) return false; // contain two '.'
+            return std::find_if(s.begin(),s.end(), [](char c) {
+                return !(std::isdigit(c) || c == '.'); }) == s.end();
+        } else
+            return std::find_if(s.begin(),s.end(), [](char c) {
+                return !std::isdigit(c); }) == s.end();
     }
 }

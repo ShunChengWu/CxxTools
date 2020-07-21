@@ -5,36 +5,36 @@
 int my_argc;
 char** my_argv;
 
-TEST(IO, find_folders_recursively_with_name){
-    tools::PathTool pathTool;
-    std::string path = "/media/sc/BackupDesk/SCSLAM/Result/ReprojectionError";
-    std::string targetFolderName = "rgbd_dataset_freiburg1_360";
-    std::vector<std::string> output;
-    pathTool.get_folders_include_name_recursively(path, targetFolderName, output);
-
+//TEST(IO, find_folders_recursively_with_name){
+//    tools::PathTool pathTool;
+//    std::string path = "/media/sc/BackupDesk/SCSLAM/Result/ReprojectionError";
+//    std::string targetFolderName = "rgbd_dataset_freiburg1_360";
+//    std::vector<std::string> output;
+//    pathTool.get_folders_include_name_recursively(path, targetFolderName, output);
+//
+////    for(auto p : output){
+////        printf("%s\n", p.c_str());
+////    }
+//}
+//
+//TEST(IO, get_targetFile_in_targetFolder_recursively){
+//    std::string path = "/media/sc/BackupDesk/SCSLAM/Result";
+//    std::string targetFolderName = "OFu";
+//    std::string targetFileName = "Summary.txt";
+//    std::vector<std::string> output;
+//    tools::PathTool::get_targetFile_in_targetFolder_recursively(path,targetFolderName,targetFileName, output);
+//
 //    for(auto p : output){
 //        printf("%s\n", p.c_str());
 //    }
-}
-
-TEST(IO, get_targetFile_in_targetFolder_recursively){
-    std::string path = "/media/sc/BackupDesk/SCSLAM/Result";
-    std::string targetFolderName = "OFu";
-    std::string targetFileName = "Summary.txt";
-    std::vector<std::string> output;
-    tools::PathTool::get_targetFile_in_targetFolder_recursively(path,targetFolderName,targetFileName, output);
-
-    for(auto p : output){
-        printf("%s\n", p.c_str());
-    }
-}
-
-TEST(IO, sort) {
-    /// Test for number order file/0.jpg file/1.jpg should be sorted correctly.
-    auto paths = tools::PathTool::get_files_in_folder("/media/sc/SSD1TB/dataset/SceneNet/SceneNetRGBD-val/val/0/0/photo/","",true,true);
-      for(const auto& path : paths)
-          printf("%s\n", path.c_str());
-}
+//}
+//
+//TEST(IO, sort) {
+//    /// Test for number order file/0.jpg file/1.jpg should be sorted correctly.
+//    auto paths = tools::PathTool::get_files_in_folder("/media/sc/SSD1TB/dataset/SceneNet/SceneNetRGBD-val/val/0/0/photo/","",true,true);
+//      for(const auto& path : paths)
+//          printf("%s\n", path.c_str());
+//}
 
 
 TEST(IO, getFileType) {
@@ -155,6 +155,34 @@ TEST(LOG, loggging){
 
     LOG(DEBUG) << "1";
 }
+
+TEST(PATHTOOL, IsNumber){
+    {
+        const std::string pth = "0.001";
+        EXPECT_TRUE(tools::PathTool::isNumber(pth));
+    }
+    {
+        const std::string pth1 = "0.00.1";
+        EXPECT_FALSE(tools::PathTool::isNumber(pth1));
+    }
+    {
+        const std::string pth1 = "123456789";
+        EXPECT_TRUE(tools::PathTool::isNumber(pth1));
+    }
+    {
+        const std::string pth1 = "12345678.9";
+        EXPECT_TRUE(tools::PathTool::isNumber(pth1));
+    }
+    {
+        const std::string pth1 = ".5";
+        EXPECT_TRUE(tools::PathTool::isNumber(pth1));
+    }
+    {
+        const std::string pth1 = "000.51a";
+        EXPECT_FALSE(tools::PathTool::isNumber(pth1));
+    }
+}
+
 int main(int argc, char ** argv){
     testing::InitGoogleTest(&argc,argv);
     my_argc = argc;
