@@ -181,6 +181,22 @@ TEST(PATHTOOL, IsNumber){
         const std::string pth1 = "000.51a";
         EXPECT_FALSE(tools::PathTool::isNumber(pth1));
     }
+    {
+        const std::string pth1 = "-0.1";
+        EXPECT_TRUE(tools::PathTool::isNumber(pth1));
+    }
+    {
+        const std::string pth1 = "-0.1.2";
+        EXPECT_FALSE(tools::PathTool::isNumber(pth1));
+    }
+    {
+        const std::string pth1 = "-123456789";
+        EXPECT_TRUE(tools::PathTool::isNumber(pth1));
+    }
+    {
+        const std::string pth1 = "-123456-789";
+        EXPECT_FALSE(tools::PathTool::isNumber(pth1));
+    }
 }
 
 int main(int argc, char ** argv){

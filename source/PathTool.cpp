@@ -532,12 +532,22 @@ namespace tools{
     bool PathTool::isNumber(const std::string &s){
         // if contains '.'
         if(s.empty())return false;
+
+        // is negative
+        if(s[0] == '-'){
+            if(s.find('-') != s.find_last_of('-')) return false; // contain two '-'
+        }
+
         if(s.find('.') != std::string::npos) {
             if(s.find('.') != s.find_last_of('.')) return false; // contain two '.'
-            return std::find_if(s.begin(),s.end(), [](char c) {
-                return !(std::isdigit(c) || c == '.'); }) == s.end();
-        } else
-            return std::find_if(s.begin(),s.end(), [](char c) {
-                return !std::isdigit(c); }) == s.end();
+//            return std::find_if(s.begin(),s.end(), [](char c) {
+//                return !(std::isdigit(c) || c == '.'); }) == s.end();
+        }
+//        else
+//            return std::find_if(s.begin(),s.end(), [](char c) {
+//                return !std::isdigit(c); }) == s.end();
+
+        return std::find_if(s.begin(),s.end(), [](char c) {
+            return !(std::isdigit(c) || c == '.' || c == '-'); }) == s.end();
     }
 }
