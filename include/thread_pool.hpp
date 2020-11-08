@@ -8,6 +8,7 @@
 #include <thread>
 #include <utility>
 #include <atomic>
+#include <string>
 namespace tools{
     class TaskThreadPool{
     private:
