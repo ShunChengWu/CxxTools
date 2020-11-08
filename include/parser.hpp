@@ -180,7 +180,7 @@ namespace tools {
                 }
                 return 1;
             }
-            if(hasNotHandled(verbose)) return -1;
+            if(hasNotHandled()) return -1;
             if(hasNotRegistered(verbose))return 0;
             if(verbose)
             {
@@ -210,7 +210,7 @@ namespace tools {
 
         bool hasHelp(){return hasHelp_;}
     private:
-        bool hasNotHandled(bool verbose){
+        bool hasNotHandled(){
             std::vector<std::string> vNotHandled;
             for (auto& pair : vRegisterd) {
                 if(pair.second.required && !pair.second.handled){
@@ -218,7 +218,7 @@ namespace tools {
                 }
             }
             if(!vNotHandled.empty()){
-                if(verbose) {
+                {
                     printf("[Error] The following argument(s) should be given. Pass --h for help\n");
                     for (auto &noth : vNotHandled) {
                         printf("\t\t %s \"%s\"\n", noth.c_str(), vRegisterd[noth].explination.c_str());
