@@ -180,8 +180,10 @@ namespace tools{
         return output;
     }
     
-    void PathTool::get_files_include_name (std::string path, const std::string& name, std::vector<std::string>& files_with_name) {
-        auto files_all = get_files_in_folder(std::move(path), "", true, false);
+    void PathTool::get_files_include_name(std::string path, const std::string &name,
+                                          std::vector<std::string> &files_with_name,
+                                          bool return_full, bool sort) {
+        auto files_all = get_files_in_folder(std::move(path), "", return_full, sort);
         for (const auto& file: files_all) {
             auto boo = file.find(name);
             if (boo != std::string::npos) files_with_name.push_back(file);
