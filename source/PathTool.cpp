@@ -63,10 +63,11 @@ namespace tools{
             if (temp == std::string::npos){
 //                printf("[warning] Reach the most previous folder.");
 //                return "";
+                if (i==0) output = "";
                 break;
             }
             size_t first = output.find_first_of('/');
-            if(first == temp) return ""; // no file name
+            if(first == temp) return output.substr(0,first+1); // no file name
             output.assign(output, 0, temp);
         }
         return output;
@@ -171,12 +172,15 @@ namespace tools{
     
     std::string PathTool::get_current_dir_name(std::string path){
         std::string output, tmp;
-        tmp = find_parent_folder(path, 1);
-        if(tmp.empty()) return ""; // no parent
-        if(tmp.size() == path.size()) return path; // is name already.
         if(path[path.size()-1] == '/') //path.pop_back();
             path = path.substr(0, path.length()-1);
-        output = path.substr(tmp.size()+1, path.size() - tmp.size());
+
+        tmp = find_parent_folder(path, 1);
+        if(tmp.empty()) return ""; // no parent
+        if(tmp=="/") return path.substr(1,path.length());
+        if(tmp.size() == path.size()) return path; // is name already.
+
+        output = path.substr(tmp.size(), path.length());
         return output;
     }
     

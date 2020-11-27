@@ -199,9 +199,40 @@ TEST(PATHTOOL, IsNumber){
     }
 }
 
+TEST(PATHTOOL, get_current_dir_name){
+    {
+        const std::string pth = "/";
+        EXPECT_EQ(tools::PathTool::get_current_dir_name(pth), "");
+    }
+    {
+        const std::string pth = "/scene0011_00/";
+        EXPECT_EQ(tools::PathTool::get_current_dir_name(pth), "scene0011_00");
+    }
+    {
+        const std::string pth = "./scene0011_00/";
+        EXPECT_EQ(tools::PathTool::get_current_dir_name(pth), "scene0011_00");
+    }
+    {
+        const std::string pth = "/scene0011_00";
+        EXPECT_EQ(tools::PathTool::get_current_dir_name(pth), "scene0011_00");
+    }
+    {
+        const std::string pth = "./";
+        EXPECT_EQ(tools::PathTool::get_current_dir_name(pth), "");
+    }
+    {
+        const std::string pth = "./scene0011_00";
+        EXPECT_EQ(tools::PathTool::get_current_dir_name(pth), "scene0011_00");
+    }
+}
+
 int main(int argc, char ** argv){
     testing::InitGoogleTest(&argc,argv);
     my_argc = argc;
     my_argv = argv;
+    {
+        const std::string pth = "./";
+        EXPECT_EQ(tools::PathTool::get_current_dir_name(pth), "");
+    }
     return RUN_ALL_TESTS();
 }
